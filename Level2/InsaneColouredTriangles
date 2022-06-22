@@ -1,0 +1,22 @@
+import math
+
+def triangle(row):
+    
+    converter = {"BB":"B","RR":"R","GG":"G","GB":"R","BG":"R","BR":"G","RB":"G","GR":"B","RG":"B"}
+    new_row = row
+    
+    while len(new_row) > 1:
+        length = len(new_row)
+        next_row = str()
+        n = math.log((length-1),3)
+        n = math.floor(n)
+        width = 3**n + 1
+
+        i = 0
+        while i + width - 1 < length:
+            test = new_row[i] + new_row[i + width - 1]
+            next_row = next_row + converter[test]
+            i = i + 1
+        new_row = next_row
+            
+    return new_row
