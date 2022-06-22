@@ -1,0 +1,120 @@
+# Given two numbers and a an operation, "+", "-" ... Calculate the result of the operation on the two numbers.
+
+def calculator(num1, num2, operation):
+    number1 = float(num1)
+    number2 = float(num2)
+    
+    op = operation
+    if op == '?':
+        number1 = number1 * -1
+        op = '*'
+    if op == '!':
+        number1 = number1 * -1
+        op = '/'
+        
+    if op == '*':
+        return str(number1 * number2)
+    if op == '/':
+        return str(number1 / number2)
+    if op == '+':
+        return str(number1 + number2)
+    if op == '-':
+        return str(number1 - number2)
+    return 'Error'
+
+
+# This function strips some of the junk out of the expression, but also changes some pieces into an easier to use format.
+def simplify(expression):
+    equation = expression
+    while " " in equation:
+        equation = equation.replace(" ", "")
+    equation = equation.replace('--','+')
+    equation = equation.replace('+-','-')
+    equation = equation.replace('*+', '*')
+    equation = equation.replace('/+', '/')
+    if equation[0] == '+':
+        equation = equation[1::]    
+    return equation
+
+
+# Evaluate the pieces of the expression with regard to order of operations.
+def evaluate(pieces):
+    operations = '*?/!'
+    
+    #Do all multiplication and division, left to right.
+    while '*' in pieces or '?' in pieces or '/' in pieces or '!' in pieces:
+        i = 0
+        while i < len(pieces):
+            if pieces[i] in operations:
+                i = i - 1
+                number1 = pieces.pop(i)
+                operation = pieces.pop(i)
+                number2 = pieces.pop(i)
+                result = calculator(number1, number2, operation)
+                pieces.insert(i, result)
+                break
+            i = i + 1
+            
+    # Do all the addition and subtraction left to right.
+    operations = '+-'
+    while '+' in pieces or '-' in pieces:
+        i = 0
+        while i < len(pieces):
+            if pieces[i] in operations:
+                i = i - 1
+                number1 = pieces.pop(i)
+                operation = pieces.pop(i)
+                number2 = pieces.pop(i)
+                result = calculator(number1, number2, operation)
+                pieces.insert(i, result)
+                break
+            i = i + 1
+    
+    return pieces[0]
+        
+
+# Calculates a piece of the expression.
+def calculate_piece(expression):
+    equation = expression
+    equation = equation.lstrip('(')
+    equation = equation.rstrip(')')
+    equation = simplify(equation)
+    pieces = []
+    # Break down equation into pieces
+    equation = equation.replace('*-', ' ? ')
+    equation = equation.replace('/-', ' ! ')
+    equation = equation.replace('*', ' * ')
+    equation = equation.replace('/', ' / ')
+    equation = equation.replace('+', ' + ')
+    equation = equation.replace('-', ' - ')
+    equation = equation.lstrip(' ')
+    if equation[0] == '-':
+        equation = equation.replace('- ', '-', 1)
+    pieces = equation.split(' ')
+    solution = evaluate(pieces)
+
+    return solution
+
+
+# This is our main function.  It is used to find the result of a mathematical expression given as a string.
+def calc(expression):
+    # First we will simplify the expression.  This basicly just strips junk out of the expression.
+    equation = simplify(expression)
+    
+    # Systematically evaluate statements in parenthesis.
+    while '(' in equation:
+        left_index = equation.rfind("(")
+        i = left_index + 1
+        while i < len(equation):
+            if equation[i] == ')':
+                right_index = i + 1
+                break
+            i = i + 1
+        piece = equation[left_index: right_index]
+        evaluated_piece = calculate_piece(piece)
+        equation = equation.replace(piece, evaluated_piece)
+        equation = simplify(equation)
+    
+    equation = calculate_piece(equation)
+    
+    return float(equation)
