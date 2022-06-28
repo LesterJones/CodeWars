@@ -1,0 +1,200 @@
+import itertools
+
+def hand_rank(hand):
+    ranks = {'high_card' : 0, 'pair' : 1, 'two_pair': 2, 'three_of_a_kind': 3,
+             'straight': 4, 'flush': 5, 'full_house': 6, 'four_of_a_kind': 7,
+             'straight_flush': 8, 'royal_flush': 9}
+        
+    suits = set()
+    i = 1
+    while i <= 13:
+        suits.add(hand[i])
+        i = i + 3
+        
+    if len(suits) == 1:
+        isFlush = True
+    else:
+        isFlush = False
+        
+    cards = []
+    i = 0
+    while i <= 12:
+        cards.append(hand[i])
+        i = i + 3
+        
+    card_rank = 'AKQJT98765432'
+    
+    #Reorder the cards
+    i = 0
+    cards2 = []
+    while i < len(card_rank):
+        card = card_rank[i]
+        count = cards.count(card)
+        j = 0
+        while j < count:
+            cards2.append(card)
+            j = j + 1
+        i = i + 1
+    
+    cards = cards2
+    
+    str_hand = ''
+    for entry in cards:
+        str_hand = str_hand + entry
+    if str_hand in card_rank:
+        isStraight = True
+    else:
+        isStraight = False
+        
+    if isStraight and isFlush and cards[0] == 'A':
+        return [ranks['royal_flush'], cards]
+    
+    if isStraight and isFlush:
+        return [ranks['straight_flush'], cards]
+    
+    if isFlush:
+        return [ranks['flush'], cards]
+    
+    if isStraight:
+        return [ranks['straight'], cards]
+    
+    i = 0
+    ref4 = []
+    ref3 = []
+    ref2 = []
+    ref1 = []
+    while i < len(card_rank):
+        card = card_rank[i]
+        count = cards.count(card)
+        if count == 4:
+            ref4.append(card)
+        elif count == 3:
+            ref3.append(card)
+        elif count == 2:
+            ref2.append(card)
+        elif count == 1:
+            ref1.append(card)
+        i = i + 1
+
+    cards2 = []    
+    if len(ref4) == 1:
+        card = ref4[0]
+        cards2 = [card, card, card, card, ref1[0]]
+        return [ranks['four_of_a_kind'], cards2]
+    
+    if len(ref3) == 1 and len(ref2) == 1:
+        cards2 = [ref3[0], ref3[0], ref3[0], ref2[0], ref2[0]]
+        return [ranks['full_house'], cards2]
+        
+    if len(ref3) == 1:
+        cards2 = [ref3[0], ref3[0], ref3[0], ref1[0], ref1[1]]
+        return [ranks['three_of_a_kind'], cards2]
+    
+    if len(ref2) == 2:
+        cards2 = [ref2[0], ref2[0], ref2[1], ref2[1], ref1[0]]
+        return [ranks['two_pair'], cards2]
+    
+    if len(ref2) == 1:
+        cards2 = [ref2[0], ref2[0], ref1[0], ref1[1], ref1[2]]
+        return [ranks['pair'], cards2]
+    
+    return [ranks['high_card'], cards]
+
+
+def change_hand_format(card_list):
+    updated_list = list()
+    changes = {'♠':'S','♦':'D','♣':'C','♥':'H'}
+    for card in card_list:
+        if '10' in card:
+            new_card = 'T' + changes[card[-1]]
+        else:
+            new_card = card[0] + changes[card[1]]
+        updated_list.append(new_card)
+    return updated_list
+
+def change_hand_to_string(cards):
+    hand = ''
+    for card in cards:
+        hand = hand + card + ' '
+    hand.rstrip(' ')
+    return hand
+
+def find_hand_combinations(hole, community):
+    possible_hands = list()
+    i = 0
+    while i <= len(hole):
+        j = 5 - i
+        hole_combos = itertools.combinations(hole, i)
+        community_combos = itertools.combinations(community, j)
+        hole_combos = list(hole_combos)
+        hole_combos = [list(x) for x in hole_combos]
+        community_combos = list(community_combos)
+        for hole_cards in hole_combos:
+            for community_cards in community_combos:
+                hand = hole_cards.copy()
+                hand.extend(community_cards)
+                possible_hands.append(hand)
+        i = i + 1
+    return possible_hands
+
+def find_best_hand(hands):
+    ranks = {0:'nothing', 1:'pair', 2:'two pair', 3:'three-of-a-kind',
+             4:'straight', 5:'flush', 6:'full house', 7:'four-of-a-kind',
+             8:'straight-flush', 9:'straight-flush'
+            }
+    highest_rank = hands[0][0]
+    best_hands = list()
+    for hand in hands:
+        if hand[0] == highest_rank:
+            best_hands.append(hand[1])
+    rankings = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
+
+    #Rewrite the hands in a way that is easy to sort.
+    sortable_hands = list()
+    for hand in best_hands:
+        new_hand = list()
+        for entry in hand:
+            new_hand.append(rankings.index(entry))
+        sortable_hands.append(new_hand)
+    sortable_hands.sort(reverse=True)
+    best_hand = sortable_hands[0]
+    
+    #Convert the best hand back to a readable format
+    hand = list()
+    for entry in best_hand:
+        if entry == 8:
+            hand.append('10')
+        else:
+            hand.append(rankings[entry])
+    
+    changed = True
+    while changed:
+        changed = False
+        i = 0
+        while i < len(hand) - 1:
+            if hand[i] == hand[i+1]:
+                hand.pop(i)
+                changed = True
+                break
+            i = i + 1
+    
+    return (ranks[highest_rank], hand)
+    
+    
+
+def hand(hole_cards, community_cards):
+    #Reformat cards
+    hole = change_hand_format(hole_cards)
+    community = change_hand_format(community_cards)
+    
+    #Assemble all possible hand combinations
+    hands = find_hand_combinations(hole, community)
+    hands_ranked = list()
+    for hand in hands:
+        new_hand = change_hand_to_string(hand)
+        rank = hand_rank(new_hand)
+        hands_ranked.append(rank)
+    hands_ranked.sort(reverse = True)
+    best_hand = find_best_hand(hands_ranked)
+    
+    return best_hand
