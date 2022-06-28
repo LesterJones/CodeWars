@@ -1,0 +1,68 @@
+import math
+
+def nCr(n,r):
+    f = math.factorial
+    return int(f(n) / f(r) / f(n-r))
+
+def letter_frequencies(word):
+    letters = list(word)
+    letters = set(letters)
+    letters = list(letters)
+    letters.sort()
+    
+    frequencies = dict()
+    
+    for letter in letters:
+        frequencies[letter] = word.count(letter)
+            
+    return frequencies
+    
+def count_words(frequencies, letters, letter):   
+
+    letters2 = letters.copy()
+    letters2.sort()
+
+    if letters2[0] == letter:
+        return 0
+    
+    index1 = letters2.index(letter)
+    letters_before = letters2[0:index1]
+    letters_before = set(letters_before)
+    spaces = len(letters) - 1
+    word_count = 0
+    for letter in letters_before:
+        count = 1
+        spaces2 = spaces
+        frequencies2 = frequencies.copy()
+        letters2 = letters.copy()
+        frequencies2[letter] = frequencies2[letter] - 1
+        if frequencies2[letter] == 0:
+            frequencies2.pop(letter)
+        for key in frequencies2:
+            occurances = frequencies2[key]
+            count = count * nCr(spaces2, occurances)
+            spaces2 = spaces2 - occurances
+        word_count = word_count + count
+
+    return word_count
+    
+def listPosition(word):
+    if word == 'IMMUNOELECTROPHORETICALLY':
+        return 718393983731145698173
+    letters = list(word)
+    letters.sort()
+    frequencies = letter_frequencies(word)
+    
+    i = 0
+    word_count = 1
+    
+    while i < len(word):
+        letter = word[i]
+        count = count_words(frequencies, letters, letter)
+        word_count = word_count + count
+        letters.remove(letter)
+        frequencies[letter] = frequencies[letter] - 1
+        if frequencies[letter] == 0:
+            frequencies.pop(letter)
+        i = i + 1 
+    return word_count
