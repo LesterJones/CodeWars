@@ -1,0 +1,104 @@
+def find_words(string, n):
+    lengths = []
+    i = 0
+    while i < n:
+        lengths.append(0)
+        i = i + 1
+    i = 0
+    index = 0
+    increasing = True
+    while i < len(string):
+        lengths[index] = lengths[index] + 1
+        i = i + 1
+        if increasing == True:
+            if index == n - 1:
+                increasing = False
+                index = index - 1
+                continue
+            else:
+                index = index + 1
+        if increasing == False:
+            if index == 0:
+                increasing = True
+                index = index + 1
+                continue
+            else:
+                index = index - 1
+    
+    words = []
+    index1 = 0
+    for length in lengths:
+        index2 = index1 + length
+        words.append(string[index1:index2])
+        index1 = index2
+    
+    return words
+                
+                
+def encode_rail_fence_cipher(string, n):
+    message = string
+    words = []
+    
+    i = 0
+    while i < n:
+        words.append('')
+        i = i + 1
+        
+    i = 0
+    increasing = True
+    index = 0
+    while i < len(string):
+        letter = string[i]
+        words[index] = words[index] + letter
+        i = i + 1
+        if increasing == True:
+            if index == n - 1:
+                increasing = False
+                index = index - 1
+                continue
+            else:
+                index = index + 1
+        if increasing == False:
+            if index == 0:
+                increasing = True
+                index = index + 1
+                continue
+            else:
+                index = index - 1
+    return ''.join(words)
+        
+    
+def decode_rail_fence_cipher(string, n):
+    words = find_words(string, n)
+    pointers = []
+    
+    i = 0
+    while i < len(words):
+        pointers.append(0)
+        i = i + 1
+    
+    
+    message = ''
+    index = 0
+    increasing = True
+    i = 0
+    while i < len(string):
+        letter = words[index][pointers[index]]
+        message = message + letter
+        pointers[index] = pointers[index] + 1
+        i = i + 1
+        if increasing == True:
+            if index == n - 1:
+                increasing = False
+                index = index - 1
+                continue
+            else:
+                index = index + 1
+        if increasing == False:
+            if index == 0:
+                increasing = True
+                index = index + 1
+                continue
+            else:
+                index = index - 1
+    return message
