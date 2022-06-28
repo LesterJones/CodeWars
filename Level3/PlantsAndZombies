@@ -1,0 +1,202 @@
+def shoot_normal(yard):
+    yard2 = yard
+    numbers = '0123456789'
+    shots_fired_per_row = []
+    
+    #Calculate the number of shots per row
+    
+    for row in yard:
+        shots_fired = 0
+        for entry in row:
+            if entry == '':
+                continue
+            if entry in numbers:
+                shots_fired = shots_fired + int(entry)
+        shots_fired_per_row.append(shots_fired)
+
+    #Apply shots to zombies.
+    i = 0
+    while i < len(yard):
+        j = 0
+        shots_available = shots_fired_per_row[i]
+        while j < len(yard[0]) and shots_available > 0:
+            if yard[i][j] == '':
+                j = j + 1
+                continue
+                
+            if yard[i][j][0] == 'Z':
+                health = int(yard[i][j][1::])
+                while shots_available > 0:
+                    health = health - 1
+                    shots_available = shots_available - 1
+                    if health == 0:
+                        yard[i][j] = ''
+                        break
+                if health != 0:
+                    yard[i][j] = 'Z' + str(health)
+            j = j + 1
+        i = i + 1
+    
+    return yard
+                    
+    
+    
+def shoot_s_shooters(yard):
+    
+    yard2 = yard
+    column = len(yard2[0]) - 1
+    while column >= 0:
+        row = 0
+        while row < len(yard2):
+            if yard2[row][column] == 'S':
+                
+                #Fire Diagonally upward
+                new_row = row - 1
+                new_column = column + 1
+                while new_row >= 0 and new_column < len(yard2[0]):
+                    if yard2[new_row][new_column] == '':
+                        new_row = new_row - 1
+                        new_column = new_column + 1
+                        continue
+                    if yard2[new_row][new_column][0] == 'Z':
+                        health = int(yard2[new_row][new_column][1::])
+                        health = health - 1
+                        if health == 0:
+                            yard2[new_row][new_column] = ''
+                        else:
+                            yard2[new_row][new_column] = 'Z' + str(health)
+                        break
+                    new_row = new_row - 1
+                    new_column = new_column + 1
+                        
+                #Fire strait
+                new_row = row
+                new_column = 0
+                
+                while new_column < len(yard2[0]):
+
+                    if yard2[new_row][new_column] == '':
+                        new_column = new_column + 1 
+                        continue
+                    if yard2[new_row][new_column][0] == 'Z':
+                        health = int(yard2[new_row][new_column][1::])
+                        health = health - 1
+                        if health == 0:
+                            yard2[new_row][new_column] = ''
+                        else:
+                            yard2[new_row][new_column] = 'Z' + str(health)
+                        break
+                    
+                    new_column = new_column + 1
+                
+                #Fire Diagonally downward
+                new_row = row + 1
+                new_column = column + 1
+                while new_row < len(yard2) and new_column < len(yard2[0]):
+                    if yard2[new_row][new_column] == '':
+                        new_row = new_row + 1
+                        new_column = new_column + 1
+                        continue
+                    if yard2[new_row][new_column][0] == 'Z':
+                        health = int(yard2[new_row][new_column][1::])
+                        health = health - 1
+                        if health == 0:
+                            yard2[new_row][new_column] = ''
+                        else:
+                            yard2[new_row][new_column] = 'Z' + str(health)
+                        break
+                    new_row = new_row + 1
+                    new_column = new_column + 1
+            
+            row = row + 1
+        
+        column = column - 1
+    
+    return yard2
+    
+    
+def check_for_win(yard, zombies_in_queue):
+    
+    if len(zombies_in_queue) > 0:
+        return False
+    for row in yard:
+        for square in row:
+            if square == '':
+                continue
+            if square[0] == 'Z':
+                return False
+    
+    return True
+             
+def move_zombies(yard):
+    i = 0
+    while i < len(yard):
+        j = 0
+        while j < len(yard[1]):
+            if yard[i][j] == '':
+                j = j + 1
+                continue
+            
+            if yard[i][j][0] == 'Z':
+                if j == 0:
+                    return 'The zombies ate your brains'
+                yard[i][j - 1] = yard[i][j]
+                yard[i][j] = ''
+            j = j + 1
+        i = i + 1
+    return yard
+
+
+
+def add_zombies(yard, zombies_in_queue, move):
+    yard2 = yard
+    zombies_not_placed = []
+    for zombie in zombies_in_queue:
+        if zombie[0] == move:
+            yard2[zombie[1]][-1] = 'Z' + str(zombie[2])
+        else:
+            zombies_not_placed.append(zombie)
+            
+    return yard2, zombies_not_placed
+
+
+
+def create_yard(lawn):
+    yard = []
+    
+    for row in lawn:
+        new_row = []
+        for square in row:
+            new_row.append(square)
+        yard.append(new_row)
+    
+    return yard
+
+
+
+def plants_and_zombies(lawn,zombies):
+    
+    yard = create_yard(lawn)
+    zombies_in_queue = zombies
+    
+    #print_yard(yard)
+    #return 0
+
+    move = 0
+    
+    while move < 1000:
+        
+        yard = move_zombies(yard)
+        if yard == 'The zombies ate your brains':
+            return move
+        yard, zombies_in_queue = add_zombies(yard, zombies_in_queue, move)
+        
+        yard = shoot_normal(yard)
+        yard = shoot_s_shooters(yard)
+        
+        if check_for_win(yard, zombies_in_queue):
+            return None
+        
+        move = move + 1
+        
+    return 'Error'
