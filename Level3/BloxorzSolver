@@ -1,0 +1,140 @@
+def find_start_and_end_points(ar):
+    rows = len(ar)
+    columns = len(ar[0])
+    
+    i = 0
+    while i < rows:
+        j = 0
+        while j < columns:
+            if ar[i][j] == 'B':
+                start = (i, j)
+            if ar[i][j] == 'X':
+                end = (i, j)
+            j = j + 1
+        i = i + 1
+    
+    return start, end
+
+
+def check_moves(ar, possible_moves):
+    rows = len(ar)
+    columns = len(ar[0])
+    
+    legal_moves = []
+    for move in possible_moves:
+        if len(move) == 2:
+            points = [move]
+        else:
+            points = [(move[0],move[1]), (move[2], move[3])]
+        
+        is_valid = True
+        possible_points = []
+        for point in points:
+            x = point[0]
+            y = point[1]
+            if 0 <= x < rows and 0 <= y < columns:
+                if ar[x][y] != '0':
+                    possible_points.append(point)
+                else:
+                    is_valid = False
+            else:
+                is_valid = False
+        if is_valid:
+            legal_moves.append(move)
+    
+    return legal_moves
+
+
+def find_moves(ar, location):
+    #If the block is standing vertical determine it's possible moves.
+    if len(location) == 2:
+        row = location[0]
+        column = location[1]
+        possible_moves = [(row-2,column,row-1,column),
+                          (row+1,column,row+2,column),
+                          (row,column-2,row,column-1),
+                          (row,column+1,row,column+2)
+                         ]
+        moves = check_moves(ar, possible_moves)
+        
+        return moves
+    
+    #If the block is laying flat we have 2 orientations to deal with
+    
+    #Check for vertical orientation and find the possible moves
+    if location[1] == location[3]:
+        row1 = location[0]
+        column = location[1]
+        row2 = location[2]
+        
+        possible_moves = [(row1-1, column),
+                          (row2+1, column),
+                          (row1,column-1,row2,column-1),
+                          (row1,column+1,row2,column+1)]
+        
+        moves = check_moves(ar, possible_moves)
+        
+        return moves
+    
+    #Check for horizontal orientation
+    if location[0] == location[2]:
+        row = location[0]
+        column1 = location[1]
+        column2 = location[3]
+        
+        possible_moves = [(row,column1-1),
+                          (row, column2+1),
+                          (row-1,column1,row-1,column2),
+                          (row+1,column1,row+1,column2)
+                         ]
+        
+        moves = check_moves(ar, possible_moves)
+        
+        return moves
+    
+    return 'Error'
+        
+
+def blox_solver(ar):
+    #Find the start and end points, and board parameters
+    start, end = find_start_and_end_points(ar)
+    rows = len(ar)
+    column = len(ar[0])
+    
+    visited_squares = [start]
+    current_location = start
+    
+    queue = [(start, '')]
+    
+    while len(queue) > 0:
+        #Pop the first point in the queue
+        location = queue.pop(0)
+        move_list = location[1]
+        location = location[0]
+        
+        #If the location is the endpoint.  We can return the move_list.
+        if location == end:
+            return move_list
+        
+        #Otherwise we need to find all possible moves from our current location.
+        moves = find_moves(ar, location)
+
+        #Check moves against the visited squares and add them to the queue.
+        for move in moves:
+            if move in visited_squares:
+                pass
+            else:
+                visited_squares.append(move)
+                #Determine move direction
+                if move[0] < location[0]:
+                    move_direction = 'U'
+                elif move[0] > location[0]:
+                    move_direction = 'D'
+                elif move[1] < location[1]:
+                    move_direction = 'L'
+                else:
+                    move_direction = 'R'
+                
+                queue.append((move, move_list + move_direction))
+    
+    return ('Error: Empty queue')
