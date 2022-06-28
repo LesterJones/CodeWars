@@ -1,0 +1,104 @@
+# Create 3 test functions to test rows, columns, 3x3 boards (This could probably be compressed)
+def test_row(row):
+    i = 1
+    while i < 10:
+        if row.count(i) > 1:
+            return False
+        i = i + 1
+    return True
+
+def test_column(board, column):
+    numbers = list()
+    for row in board:
+        numbers.append(row[column])
+    i = 1
+    while i < 10:
+        if numbers.count(i) > 1:
+            return False
+        i = i + 1
+    return True
+
+def test_9x9(board, row, column):
+    x = row // 3
+    y = column // 3
+    x = x*3
+    y = y*3
+    
+    points = [(x,y),(x,y+1),(x,y+2),(x+1,y),(x+1,y+1),(x+1,y+2),(x+2,y),(x+2,y+1),(x+2,y+2)]
+    numbers = list()
+    for point in points:
+        numbers.append(board[point[0]][point[1]])
+    i = 1
+    while i < 10:
+        if numbers.count(i) > 1:
+            return False
+        i = i + 1
+    return True
+    
+    
+#Use backtracking to to test all possible entries.
+
+def sudoku(puzzle):
+    
+    test_board = puzzle
+    
+    #Let's find all of our zeros and create a 1-1 list containing each points current value (0)
+    location_zeros = list()
+    current_value = list()
+    #print(location_zeros)
+    row = 0
+    
+    while row < 9:
+        column = 0
+        while column < 9:
+            if puzzle[row][column] == 0:
+                location_zeros.append((row,column))
+                current_value.append(0)
+            column = column + 1
+        row = row + 1
+
+    #Start going through the points and changing them.  Use a pointer to keep up with backtracking.
+    
+    pointer = 0
+    
+    while pointer >= 0 and pointer < len(location_zeros):
+        print(pointer)
+        row = location_zeros[pointer][0]
+        column = location_zeros[pointer][1]
+        
+        test = current_value[pointer]
+        
+        #If we have tested all possible numbers unsuccessfully we need to backtrack.
+        if test < 9:
+            current_value[pointer] = current_value[pointer] + 1
+            test_board[row][column] = current_value[pointer]
+        else:
+            current_value[pointer] = 0
+            test_board[row][column] = 0
+            pointer = pointer - 1
+            continue
+
+        #Test our new board
+        if test_row(test_board[row]):
+            pass
+        else:
+            continue
+        if test_column(test_board, column):
+            pass
+        else:
+            continue
+        if test_9x9(test_board, row, column):
+            pass
+        else:
+            continue
+                
+        #If all the tests pass move the pointer up 1.  If the pointer is at the end of the list we have a 
+        #solution and we should return it.
+        
+        if pointer == len(location_zeros):
+            return test_board
+        else:
+            pointer = pointer + 1
+            continue
+    
+    return test_board
