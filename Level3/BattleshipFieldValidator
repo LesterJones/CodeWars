@@ -1,0 +1,78 @@
+#Battleship game field validator
+
+def validate_battlefield(field):
+    
+    # 1 battleship (size 4), 2 cruisers(size 3), 3 destroyers(size 2), 4 submarines (size 1)
+    fieldtoo = field
+    
+    #Test a square if it is a 1 check to the right  then check down if both it is void once we have ship location we can check around the ship
+    ships_sunk = list()
+    
+    row = 0
+    column = 0
+    ship_location = list()
+    
+    while row < 10:
+        column = 0
+        ship_length = 1
+        while column < 10:
+            #Check if we hit a ship, if not increment and check the next square
+            if fieldtoo[row][column] == 1:
+                pass
+            else:
+                column = column + 1
+                continue
+            #If we hit something lets test to find the entire ship.
+            ship_location.append([row,column])
+            fieldtoo[row][column] = 2
+            #Check horizontally
+            row_x = row
+            column_y = column + 1
+            if column_y < 10:
+                while fieldtoo[row][column_y] == 1:
+                    ship_location.append([row,column_y])
+                    fieldtoo[row][column_y] = 2
+                    column_y = column_y + 1
+                    if column_y >=10:
+                        break
+                
+            #if their was a longer ship horizontally we can proceed checking around the ship
+            #else we need to check if their is a vertical ship
+            if len(ship_location) == 1:
+                row_x = row + 1
+                column_y = column
+                
+            if row_x < 10:
+                while fieldtoo[row_x][column] == 1:
+                    ship_location.append([row_x,column])
+                    fieldtoo[row_x][column] = 2
+                    row_x = row_x + 1
+                    if row_x >= 10:
+                        break
+            #Ok, now we have the ship's location.  We need to check around the ship.
+            #If we hit another ship we can return False.
+            ships_sunk.append(len(ship_location))
+            test_squares = [(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1)]
+            for entry in ship_location:
+                for square in test_squares:
+                    test_row = row + square[0]
+                    test_column = column + square[1]
+                    if test_row >= 0 and test_row < 10 and test_column >= 0 and test_column < 10:
+                        if fieldtoo[test_row][test_column] == 1:
+                            return False
+            #If the ship passes the test we can reset some parameters and continue testing.
+            ship_location = list()
+            
+            column = column + 1
+        
+        row = row + 1
+        
+    #After we have tested the whole board.  We need to check ships_sunk to see if it has
+    #The right number of ships in it.
+    # 1 battleship (size 4), 2 cruisers(size 3), 3 destroyers(size 2), 4 submarines (size 1)        
+    
+    ships_sunk.sort()
+    if ships_sunk == [1,1,1,1,2,2,2,3,3,4]:
+        return True
+    else:
+        return False
