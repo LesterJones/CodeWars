@@ -1,0 +1,125 @@
+def revise_stops(stops, people_on_elevator, going_up):
+    new_stops = stops
+    for person in people_on_elevator:
+        if person in new_stops:
+            pass
+        else:
+            new_stops.append(person)
+    new_stops.sort()
+    if going_up:
+        return new_stops
+    else:
+        new_stops.reverse()
+        return new_stops
+
+def empty_elevator(people, floor):
+    people_remaining = []
+    for person in people:
+        if person == floor:
+            pass
+        else:
+            people_remaining.append(person)
+    return people_remaining
+
+def queues_are_not_empty(queues):
+    for que in queues:
+        if len(que) > 0:
+            return True
+    return False
+
+def tuples_to_arrays(que):
+    queues = []
+    for entry in que:
+        queues.append(list(entry))
+    return queues
+
+def get_stops(queues, going_up):
+    stops = set()
+    if going_up:
+        floor = 0
+        while floor < len(queues):
+            floor_que = queues[floor]
+            for entry in floor_que:
+                if entry > floor:
+                    stops.add(floor)
+            floor = floor + 1
+    else:
+        floor = len(queues) - 1
+        while floor >= 0:
+            floor_que = queues[floor]
+            for entry in floor_que:
+                if entry < floor:
+                    stops.add(floor)
+            floor = floor - 1
+    
+    stops = list(stops)
+    stops.sort()
+    if going_up:
+        return stops
+    else:
+        stops.reverse()
+        return stops
+
+class Dinglemouse(object):
+
+    
+    def __init__(self, queues, capacity):
+        self.queues = tuples_to_arrays(queues)
+        self.capacity = capacity
+        self.floors_visited = [0]
+        self.floor = 0
+        self.going_up = True
+        self.people_on_elevator = []
+    
+    def fill_elevator(self):
+        floor_que = self.queues[self.floor]
+        used = []
+        for entry in floor_que:
+            if len(self.people_on_elevator) >= self.capacity:
+                break
+            if self.going_up:
+                if entry > self.floor:
+                    self.people_on_elevator.append(entry)
+                    used.append(entry)
+                    continue
+            if not self.going_up:
+                if entry < self.floor:
+                    self.people_on_elevator.append(entry)
+                    used.append(entry)
+        for entry in used:
+            floor_que.remove(entry)
+        self.queues[self.floor] = floor_que
+        
+    def theLift(self):
+        while queues_are_not_empty(self.queues):
+            stops = get_stops(self.queues, self.going_up)
+            #If there are no stops on our list we need to switch direction and try again.
+            if len(stops) == 0:
+                self.going_up = not self.going_up
+                continue
+            #Move through the stops.
+            while len(stops) > 0:
+                self.floor = stops.pop(0)
+                self.floors_visited.append(self.floor)
+                #Move people off the elevator
+                self.people_on_elevator = empty_elevator(self.people_on_elevator, self.floor)
+                #Move people on the elevator
+                self.fill_elevator()
+                #Add stops if needed
+                stops = revise_stops(stops, self.people_on_elevator, self.going_up)
+            self.going_up = not self.going_up
+        
+        if self.floors_visited[-1] != 0:
+            self.floors_visited.append(0)
+        
+        visited = [0]
+        i = 1
+        while i < len(self.floors_visited):
+            if self.floors_visited[i] == self.floors_visited[i - 1]:
+                pass
+            else:
+                visited.append(self.floors_visited[i])
+            i = i + 1
+        
+        self.floors_visited = visited
+        return self.floors_visited
