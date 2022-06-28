@@ -1,0 +1,115 @@
+def expand(expr):
+    copy = expr
+    #Extract the exponent
+    x = copy.find("^")
+    y = len(expr)
+    
+    power = copy[x+1:y]
+    power = int(power)
+
+    #Edge case power == 0
+    if power == 0:
+        return "1"
+    
+    #Extract the expression between the parenthesis
+    
+    x = copy.find(")")
+    expression = copy[1:x]
+    
+    #Another Edge case power == 1
+    if power == 1:
+        return expression
+    
+    #Find the letter variable
+    
+    i = 0
+    while i < len(expression):
+        if expression[i].isalpha():
+            variable = expression[i]
+            break
+        i = i + 1
+    
+    #Find the number before the variable
+    x = expression.find(variable)
+    first_number = expression[0:x]
+    
+    if first_number == '':
+        first_number = 1   
+    if first_number == '-':
+        first_number = -1
+    first_number = int(first_number)
+    
+    #Find out if we are +-
+    
+    plus_or_minus = expression[x+1]
+
+    #Find the last number
+    
+    last_number = expression[x+2::]
+    last_number = int(last_number)
+    
+    if plus_or_minus == "-":
+        last_number = last_number * -1
+    
+    #Start with the base expression and start multiplying it out.
+    if last_number == 0:
+        base_case = [(first_number, variable)]
+    else:
+        base_case = [(first_number, variable),(last_number, "")]
+    
+    current_case = base_case
+    
+    i = 2
+    while i <= power:
+        new_case = list()
+        for x in base_case:
+            for y in current_case:
+                new_case.append((x[0] * y[0], x[1] + y[1]))
+        current_case = new_case
+        i = i + 1
+        
+    #Now we have all of the components.  We just need to add them all togeather
+    
+    i = power
+    answer = str()
+    while i >= 0:
+        if i == 0:
+            variable_piece = ''
+        else:
+            variable_piece = variable * i
+        
+        total = 0
+        for entry in current_case:
+            if entry[1] == variable_piece:
+                total = total + entry[0]
+        
+        if total == 0:
+            i = i + 1
+            continue
+        
+        if total < 0:
+            if i >= 2:
+                answer = answer + str(total) + variable + '^' + str(i)
+            if i == 1:
+                answer = answer + str(total) + variable
+            if i == 0:
+                answer = answer + str(total)
+        
+        if total > 0:
+            if i >= 2:
+                answer = answer + "+" + str(total) + variable + '^' + str(i)
+            if i == 1:
+                answer = answer + "+" + str(total) + variable
+            if i == 0:
+                answer = answer + "+" + str(total)
+        
+        i = i - 1
+    #Condition the string
+    answer = answer.strip("+")
+    print(answer[1].isalpha())
+    if answer[0] == "1" and answer[1].isalpha():
+        answer = answer.lstrip("1")
+    if answer[0] == '-' and answer[1] == '1' and answer[2].isalpha():
+        answer = answer[0] + answer[2::]
+
+    return answer
