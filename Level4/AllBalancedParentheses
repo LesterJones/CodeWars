@@ -1,0 +1,19 @@
+def balanced_parens(n):
+    answer = ['']
+    i = 0
+    while i < n*2:
+        new_answer = []
+        max = n
+        for entry in answer:
+            left_count = entry.count("(")
+            right_count = entry.count(")")
+            if left_count == right_count:
+                new_answer.append(entry + '(')
+                continue
+            if left_count != max:
+                new_answer.append(entry + '(')
+            if right_count < left_count:
+                new_answer.append(entry + ')')
+        answer = new_answer
+        i = i + 1
+    return answer
