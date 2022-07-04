@@ -1,0 +1,46 @@
+def decode_bits(bits):
+    #Remove any starting or ending zeros
+    code = bits.strip('0')
+    code2 = bits.strip('0')
+    #Find the multiplier i.e. transmission rate
+    i = 1
+    while '00' in code:
+        code = code.replace('00', '0')
+    while '11' in code2:
+        code2 = code2.replace('11', '1')
+    
+    pieces = code.split('0')
+    pieces2 = code2.split('1')
+    pieces.extend(pieces2)
+    lengths = [len(x) for x in pieces]
+    lengths.sort()
+    while lengths[0] == 0:
+        lengths.pop(0)
+    multiplier = min(lengths)
+    
+    #Now that we have the tranmission rate we can re-write the string to morse code.
+    code = bits
+    code = code.strip('0')
+    code = code.replace('1' * multiplier * 3, '-')
+    code = code.replace('1' * multiplier, '.')
+    code = code.replace('0' * multiplier * 7, '       ')
+    code = code.replace('0' * multiplier * 3, '   ')
+    code = code.replace('0' * multiplier, ' ')
+
+    return code
+    
+    
+def decode_morse(morseCode):
+    #Split the code into individual words.
+    words = morseCode.split('       ')
+    decoded_message = ''
+    for word in words:
+        #Split each word into letters.  Decode each letter and build the answer.
+        letters = word.split('   ')
+        for letter in letters:
+            letter = letter.replace(' ', '')
+            decoded_message = decoded_message + MORSE_CODE[letter]
+        decoded_message = decoded_message + ' '
+    decoded_message = decoded_message.rstrip(' ')
+
+    return decoded_message
