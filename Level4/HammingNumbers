@@ -1,0 +1,30 @@
+def hamming(n):
+    
+    hamming = [1]
+    
+    pointer2 = 0
+    pointer3 = 0
+    pointer5 = 0
+    
+    next2 = hamming[pointer2] * 2
+    next3 = hamming[pointer3] * 3
+    next5 = hamming[pointer5] * 5
+    
+    i = 1
+    while i < n:
+        new_hamming = min(next2, next3, next5)
+        hamming.append(new_hamming)
+        
+        if new_hamming == next2:
+            pointer2 = pointer2 + 1
+            next2 = hamming[pointer2] * 2
+        if new_hamming == next3:
+            pointer3 = pointer3 + 1
+            next3 = hamming[pointer3] * 3
+        if new_hamming == next5:
+            pointer5 = pointer5 + 1
+            next5 = hamming[pointer5] * 5
+    
+        i = i + 1
+
+    return hamming[-1]
