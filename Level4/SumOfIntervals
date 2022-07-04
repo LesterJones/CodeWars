@@ -1,0 +1,37 @@
+def sum_of_intervals(intervals):
+    
+    intervals_too = list()
+    
+    for interval in intervals:
+        i = interval[0]
+        expanded_interval = list()
+        while i <= interval[1]:
+            expanded_interval.append(i)
+            i = i + 1
+        intervals_too.append(expanded_interval)
+    
+    i = 0
+    while i < len(intervals_too) - 1 and len(intervals_too) > 1:
+        j = i + 1
+        new_interval = list()
+        while j < len(intervals_too):
+            if intervals_too[i][0] in intervals_too[j] or intervals_too[i][-1] in intervals_too[j] or intervals_too[j][0] in intervals_too[i] or intervals_too[j][-1] in intervals_too[i]:
+                new_interval = intervals_too[i] + intervals_too[j]
+                new_interval = set(new_interval)
+                new_interval = list(new_interval)
+                new_interval.sort()
+                break
+            j = j + 1
+        if len(new_interval) == 0:
+            i = i + 1
+            continue
+        del intervals_too[j]
+        del intervals_too[i]
+        intervals_too.append(new_interval)
+        i = 0
+        
+    total = 0
+    for interval in intervals_too:
+        total = total + (interval[-1] - interval[0])
+    
+    return total
