@@ -1,0 +1,18 @@
+import itertools
+
+def permutations(string):
+    #Split the string into an array and find all possible permutations
+    new_string = string
+    new_string = list(new_string)
+    length = len(new_string)
+    perms = itertools.permutations(new_string, length)
+    
+    #Reassemble the permutations and put them into a set (This discards repeats)
+    answers = set()
+    for entry in perms:
+        word = str()
+        for character in entry:
+            word = word + character
+        answers.add(word)
+    answers = list(answers)
+    return answers
