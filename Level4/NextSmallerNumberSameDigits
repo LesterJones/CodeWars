@@ -1,0 +1,37 @@
+def next_smaller(n):
+    number = list(str(n))
+    number_pool = [number.pop()]
+    
+    while len(number) > 0:
+        test_number = number.pop()
+        lesser_numbers = []
+        for entry in number_pool:
+            if int(entry) < int(test_number):
+                lesser_numbers.append(entry)
+        
+        if len(lesser_numbers) == 0:
+            number_pool.append(test_number)
+            continue
+        
+        lesser_numbers.sort()
+        biggest = lesser_numbers[-1]
+        number_pool.remove(biggest)
+        number_pool.append(test_number)
+        number.append(biggest)
+        number_pool.sort()
+        number_pool.reverse()
+        
+        for num in number_pool:
+            number.append(num)
+        
+        answer = ''
+        
+        for entry in number:
+            answer = answer + entry
+        
+        if answer[0] == '0':
+            return -1
+        
+        return int(answer)
+        print(number)
+    return -1
