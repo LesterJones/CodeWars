@@ -1,0 +1,74 @@
+def print_grid(grid):
+    for row in grid:
+        print(row)
+
+def maze_to_matrix(maze):
+    new_maze = []
+    i = 0
+    while i < len(maze):
+        new_row = []
+        j = 0
+        while j < len(maze[0]):
+            new_row.append(maze[i][j])
+            j = j + 1
+        new_maze.append(new_row)
+        i = i + 1
+    return new_maze
+
+def find_starting_location(grid):
+    i = 0
+    while i < len(grid):
+        j = 0
+        while j < len(grid[0]):
+            if grid[i][j] in '^v><':
+                return i, j
+            j = j + 1
+        i = i + 1
+    return 'Error', 'Error'
+
+def evaluate(moves, sleeping_position):
+    print('moves', moves)
+    print(sleeping_position)
+    directions = {'^':0,'>':1,'v':2, '<': 3}
+    pointing = directions[sleeping_position]
+    directions = ['UP', 'RIGHT', 'DOWN', 'LEFT']
+    
+    move_list = []
+    for move in moves:
+        while directions[pointing] != move:
+            pointing = (pointing + 1) % 4
+            move_list.append('R')
+        move_list.append('F')
+    
+    return move_list
+            
+def escape(maze):
+    grid = maze_to_matrix(maze)
+    row, column = find_starting_location(grid)
+    queue = [[row, column, []]]
+    visited_squares = [(row,column)]
+    sleeping_position = grid[row][column]
+    
+    escaped = False
+    directions = {'UP':(-1,0), 'RIGHT':(0,1), 'DOWN':(1,0), 'LEFT':(0,-1)}
+
+    while escaped == False:
+        if len(queue) == 0:
+            return []
+        current_location = queue.pop(0)
+        row = current_location[0]
+        column = current_location[1]
+        moves_made = current_location[2]
+        
+        for direction in directions:
+            row1 = row + directions[direction][0]
+            column1 = column + directions[direction][1]
+            if grid[row1][column1] == ' ' and (row1, column1) not in visited_squares:
+                moves = moves_made.copy()
+                moves.append(direction)
+                if row1 == 0 or column1 == 0 or row1 == len(grid) - 1 or column1 == len(grid[0]) - 1:
+                    return evaluate(moves, sleeping_position)
+                queue.append([row1, column1, moves])
+                visited_squares.append((row,column))
+    
+    return []
