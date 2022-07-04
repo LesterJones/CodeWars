@@ -1,0 +1,42 @@
+def next_bigger(n):
+    
+    numbers = str(n)
+    numbers = list(numbers)
+    
+    i = -2
+    while i >= -1 * len(numbers):
+        test_number = numbers[i]
+        numbers_after = list()
+        candidate_numbers = list()
+        j = -1
+        while j > i:
+            numbers_after.append(numbers[j])
+            if numbers[j] > test_number:
+                candidate_numbers.append(numbers[j])
+            j = j - 1
+        
+        if len(candidate_numbers) == 0:
+            i = i - 1
+            continue
+            
+        minimum = min(candidate_numbers)
+        numbers_after.remove(minimum)
+        numbers_after.append(test_number)
+        numbers_after.sort()
+        
+        k = 0
+        while k < abs(i):
+            del numbers[-1]
+            k = k + 1
+        
+        numbers.append(minimum)
+        numbers = numbers + numbers_after
+        
+        answer = str()
+        for number in numbers:
+            answer = answer + str(number)
+        
+        return int(answer)
+    
+    return -1
+            
