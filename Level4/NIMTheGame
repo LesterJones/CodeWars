@@ -1,0 +1,45 @@
+# Find the xor for a list of numbers.
+def find_xor(numbers): 
+    xor = -1
+    i = 0
+    while i < len(numbers):
+        if numbers[i] != 0:
+            if xor == -1:
+                xor = numbers[i]
+            else:
+                xor = xor ^ numbers[i]
+        i = i + 1
+    if xor == -1:
+        return 0
+    return xor
+
+def choose_move(game_state):
+    numbers = list(game_state)
+    maximum = max(numbers)
+    index1 = numbers.index(maximum)
+    
+    #Find the xor of all the numbers that are not zero.
+    xor = find_xor(numbers)
+
+    #Find a pile that has a number = to largest unpaired number
+    largest_unpaired = 2 ** (len(bin(xor)) - 3)
+    i = 0
+    index = -(len(bin(xor)) - 2)
+    while i < len(numbers):
+        binary = bin(numbers[i])[2::]
+
+        if len(binary) >= -index:
+            if binary[index] == '1':
+                target = i
+                break
+        i = i + 1
+
+    #Experiment to find how many sticks need to be taken.
+    take_sticks = 0
+    while xor != 0:
+        numbers[target] = numbers[target] - 1
+        take_sticks = take_sticks + 1
+        xor = find_xor(numbers)
+    
+    return (target, take_sticks)
+    
