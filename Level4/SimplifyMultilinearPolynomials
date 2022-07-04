@@ -1,0 +1,100 @@
+def reorder_variables(string):
+    letters = list(string)
+    letters.sort()
+    return ''.join(letters)
+
+
+def seperate_variables(piece):
+    eq = piece
+    if eq[0] == '-':
+        is_negative = True
+        eq = eq[1::]
+    else:
+        is_negative = False
+    i = 0
+    while i < len(eq):
+        if eq[i].isalpha():
+            break
+        i = i + 1
+    number = eq[0:i]
+    if number == '':
+        number = 1
+    number = int(number)
+    if is_negative:
+        number = number * -1
+    variables = eq[i::]
+    variables = reorder_variables(variables)
+    
+    return [variables, number]
+
+def reorder_parts(pieces):
+    parts = pieces.copy()
+    answer = []
+    i = 1
+    while len(answer) < len(parts):
+        partial_answer = []
+        for part in parts:
+            if len(part[0]) == i:
+                partial_answer.append(part)
+        partial_answer.sort()
+        answer.extend(partial_answer)
+        i = i + 1
+    return answer
+        
+
+def add_parts(pieces):
+    i = 0
+    parts = pieces.copy()
+    while i < len(parts) - 1:
+        if len(parts) < 2:
+            break
+        if parts[i][0] == parts[i+1][0]:
+            replacement = [parts[i][0], parts[i][1] + parts[i+1][1]]
+            parts.pop(i)
+            parts.pop(i)
+            if replacement[1] == 0:
+                i = 0
+                continue
+            else:
+                parts.insert(i, replacement)
+                i = 0
+                continue
+        i = i + 1
+    return parts
+
+
+def combine_parts(pieces):
+    parts = pieces.copy()
+    answer = ''
+    for part in parts:
+        variable = part[0]
+        number = part[1]
+        if number < 0:
+            answer = answer + '-'
+        else: answer = answer + '+'
+        number = abs(number)
+        if number == 1:
+            pass
+        else:
+            answer = answer + str(number)
+        answer = answer + variable
+    answer = answer.lstrip('+')
+    
+    return answer
+
+
+def simplify(poly):
+    #Separate out pieces
+    equation = poly.replace('-', '+-')
+    pieces = equation.split('+')
+    if pieces[0] == '':
+        pieces.pop(0)
+    parts = []
+    for piece in pieces:
+        parts.append(seperate_variables(piece))
+    parts.sort()
+    parts = add_parts(parts)
+    parts = reorder_parts(parts)
+    equation = combine_parts(parts)
+    
+    return equation
