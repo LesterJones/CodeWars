@@ -1,0 +1,22 @@
+#Pyramid slide down.  Basically I run from the bottom up.  The base layer (max) is
+#added to the layer above.  And then that pattern is iterated until the top
+#of the pyramid is reached.
+
+def longest_slide_down(pyramid):
+        
+    row_index = len(pyramid) - 2
+    bottom_row = pyramid[-1]
+    
+    while row_index >= 0:
+        row = pyramid[row_index]
+        i = 0
+        
+        while i < len(row):
+            x = row[i] + bottom_row[i]
+            y = row[i] + bottom_row[i + 1]
+            row[i] = max(x,y)
+            i = i + 1
+        row_index = row_index - 1
+        bottom_row = row    
+    
+    return row[0]
