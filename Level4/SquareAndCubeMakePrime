@@ -1,0 +1,47 @@
+import math
+import random
+
+memo = [89, 271, 325, 328]
+
+
+# This is Fermats primality test.
+
+def primality_test(number):
+    ''' if number != 1 '''
+    if (number > 1):
+        ''' repeat the test few times '''
+        for time in range(3):
+            ''' Draw a RANDOM number in range of number ( Z_number )  '''
+            randomNumber = random.randint(2, number)-1
+            
+            ''' Test if a^(n-1) = 1 mod n '''
+            if ( pow(randomNumber, number-1, number) != 1 ):
+                return False
+        
+        return True
+    else:
+        ''' case number == 1 '''
+        return False  
+
+
+def sq_cub_rev_prime(n):
+    
+    # If the answer has already been memoized return it.
+    if n <= len(memo):
+        return memo[n-1]
+    
+    # Start testing just after the last answer that has been memoized.
+    test_number = memo[-1] + 1
+    
+    # Find new numbers to fit the sequence.  Stop when we have found the nth term.
+    while len(memo) < n:
+        test_a = str(test_number ** 2)[::-1]
+        test_b = str(test_number ** 3)[::-1]
+        test_a = int(test_a)
+        test_b = int(test_b)
+        
+        if primality_test(test_a) and primality_test(test_b):
+            memo.append(test_number)
+        test_number = test_number + 1
+    
+    return memo[-1]
