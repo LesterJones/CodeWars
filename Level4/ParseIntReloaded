@@ -1,0 +1,64 @@
+#Function to parse a smaller piece.
+def parse_piece(x):
+    number = x
+    total = 0
+
+    if 100 in number:
+        total = total + 100 * number[0]
+        number.pop(0)
+        number.pop(0)
+    
+    total = total + sum(number)
+    print(total)
+    return total
+
+
+#Objective is to take a number that is written long-hand as a string and parse it into a real number.
+
+def parse_int(string):
+    
+    #Edge cases are zero and a million
+    if string == "zero":
+        return 0
+    if string == "one million":
+        return 1000000
+    
+    #Condition the string to remove dashes "-", and to remove any occurances of "and"
+    number = string
+    number = number.replace("-"," ")
+    number = number.replace(" and", "")
+    
+    #Break the number in the part before "thousand" and the part after "thousand".
+    
+    number = number.split("thousand")
+    thousands_part = ""
+    if len(number) > 1:
+        thousands_part = number[0].strip(" ")
+    hundreds_part = number[-1].strip(" ")
+    hundreds_part = hundreds_part.split(" ")
+    thousands_part = thousands_part.split(" ")
+    
+    #Convert each written number to an integer using a dictionary.
+    
+    converter = {'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,
+                 'nine':9,'ten':10,'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,
+                 'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,
+                 'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,
+                 'eighty':80,'ninety':90, 'hundred':100, 'thousand':1000, '':0
+                }
+
+    thousands = list()
+    for entry in thousands_part:
+        thousands.append(converter[entry])
+    hundreds = list()
+    for entry in hundreds_part:
+        hundreds.append(converter[entry])
+    
+    #Now that the numbers are broken into the thousands and the hundreds part.
+    #Use the parse_piece function to finish the job, and sum the total.
+
+    total = 0
+    total = total + 1000 * parse_piece(thousands)
+    total = total + parse_piece(hundreds)
+    
+    return total
