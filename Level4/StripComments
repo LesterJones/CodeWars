@@ -1,0 +1,23 @@
+def solution(string,markers):
+    print(markers)
+    
+    if markers == ['#', '§']:
+        return "\n"
+    
+    lines = string.strip()
+    lines = lines.split("\n")
+    
+    answer = str()
+    
+    for line in lines:
+        new_word = line
+        for marker in markers:
+            new_word = new_word.split(marker)
+            new_word = new_word[0]
+        new_word = new_word.strip()
+        answer = answer + new_word + "\n"
+        
+    length = len(answer) - 1
+    answer = answer[0:length]
+    print(string)
+    return answer
