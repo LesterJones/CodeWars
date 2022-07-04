@@ -1,0 +1,47 @@
+class VigenereCipher(object):
+    def __init__(self, key, alphabet):
+        self.key = key
+        self.alphabet = alphabet
+    
+    def encode(self, text):
+        
+        alphabet = self.alphabet
+        key = self.key
+        code_word = ''
+        length = len(alphabet)
+        i = 0
+        
+        while i < len(text):
+            letter = text[i]
+            if letter in alphabet:
+                shift = alphabet.index(key[i % len(key)])
+                index = alphabet.index(letter)
+                index = (index + shift) % length
+                code_word = code_word + alphabet[index]
+            else:
+                code_word = code_word + letter
+            i = i + 1
+        
+        return code_word
+    
+    
+    def decode(self, text):
+        
+        alphabet = self.alphabet
+        key = self.key
+        
+        code_word = ''
+        
+        i = 0
+        while i < len(text):
+            letter = text[i]
+            if letter in alphabet:
+                shift = shift = alphabet.index(key[i % len(key)])
+                index = alphabet.index(letter)
+                index = (index - shift) % len(alphabet)
+                code_word = code_word + alphabet[index]
+            else:
+                code_word = code_word + letter
+            i = i + 1
+                
+        return code_word
