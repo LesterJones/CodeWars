@@ -1,0 +1,56 @@
+def knight(p1, p2):
+    
+    # Create a board, populated with zeros
+    board = [[-1]*8 for _ in range(8)]
+
+    # Convert points to a-h columns 1-8 and 1-8 row
+    
+    converter = {"a":1,"b":2,"c":3,"d":4,"e":5,"f":6,"g":7,"h":8}
+    # x is start column; y is start row    
+    x = converter[p1[0]] - 1
+    y = int(p1[1]) - 1
+    
+    #Set starting position on board, start a queue, and a list of possible knight moves
+    board[x][y] = 0
+    queue = list()
+    queue.append([x,y])
+    knight_moves = [[1,2],[1,-2],[2,1],[2,-1],[-1,2],[-1,-2],[-2,1],[-2,-1]]
+    
+    i = 0
+    
+    #Start testing possible knight moves
+    
+    while i < 100:
+        for move in knight_moves:
+            new_x = x + move[0]
+            new_y = y + move[1]
+            
+            #Check for out_of_bounds
+            if (new_x < 0) or (new_x > 7) or (new_y < 0) or (new_y > 7):
+                continue
+            
+            #Check if we are landing on a square that hasn't been landed on yet
+            #If it is new:  Add it to the queue.  Make a note on board how many 
+            #moves it took to reach that square.
+            
+            if board[new_x][new_y] == -1:
+                queue.append([new_x, new_y])
+                board[new_x][new_y] = (board[x][y] + 1)
+            else:
+                continue
+            
+            #If the square was a new square is it our destination square?
+            #If is was then return it!
+            
+            if (new_x == converter[p2[0]] - 1) and (new_y == int(p2[1]) - 1):
+                return board[new_x][new_y]
+                
+        #After checking all possible moves.  Remove the point from the queue.
+        #set a new x & y from the queue, and start testing again from that square
+        
+        del queue[0]
+        x = queue[0][0]
+        y = queue[0][1]
+        i = i + 1
+    
+    return 'Error'
