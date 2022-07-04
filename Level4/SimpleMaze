@@ -1,0 +1,87 @@
+# For troubleshooting
+
+def print_board(board):
+    for row in board:
+        print(row)
+
+def convert_maze(maze):
+    #Find longest entry in maze:
+    max = 0
+    for entry in maze:
+        if len(entry) > max:
+            max = len(entry)
+    
+    #Create a matrix to represent the maze
+    board = []
+    for entry in maze:
+        length = len(entry)
+        row = []
+        i = 0
+        while i < length:
+            row.append(entry[i])
+            i = i + 1
+        while i < max:
+            row.append(' ')
+            i = i + 1
+        board.append(row)
+    
+    return board
+
+
+def find_kate(board):
+    count = 0
+    row = 0
+    column = 0
+    # Loop through the board and find kate.
+    i = 0
+    while i < len(board):
+        j = 0
+        while j < len(board[0]):
+            if board[i][j] == 'k':
+                count = count + 1
+                row = i
+                column = j
+            j = j + 1
+        i = i + 1
+    
+    if count == 1:
+        return row, column, False
+    else:
+        return row, column, True
+    
+
+def has_exit(maze):
+
+    board = convert_maze(maze)
+
+    # Find the location of kate and check that there is only one kate.
+    x, y, too_many_kates = find_kate(board)
+
+    if too_many_kates:
+        raise Exception("Too many Kates")
+        
+    # Implement a queue.  i.e. Bredth First Search
+    rows = len(board) - 1
+    columns = len(board[0]) - 1
+    
+    queue = [(x,y)]
+    found_squares = [(x, y)]
+    moves = [(0,1),(0,-1),(1,0),(-1,0)]
+    while len(queue) > 0:
+        location = queue.pop(0)
+        x = location[0]
+        y = location[1]
+        # Test if (x,y) is on the edge.  (We escaped!, return True)
+        if x == 0 or y == 0 or x == rows or y == columns:
+            return True
+      # Check possible moves for empty, ' ', squares.
+        for move in moves:
+            x1 = x + move[0]
+            y1 = y + move[1]
+            if x1 >= 0 and x1 <= rows and y1 >= 0 and y1 <= columns:
+                if board[x1][y1] == ' ':
+                    if (x1, y1) not in found_squares:
+                        found_squares.append((x1, y1))
+                        queue.append((x1, y1))
+
+    return False
