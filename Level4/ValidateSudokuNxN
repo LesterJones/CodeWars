@@ -1,0 +1,74 @@
+import math
+
+class Sudoku(object):
+    def __init__(self, data):
+        self.board = data
+    def is_valid(self):
+        
+        if isinstance(self.board[0][0], bool):
+            return False
+
+        print(self.board)
+        size = len(self.board)
+        square_size = int(math.sqrt(len(self.board)))
+        
+        if square_size % 1 != 0:
+            return False
+        
+        for row in self.board:
+            if len(row) != size:
+                return False
+            
+        test_set = set(range(1, size + 1))
+        
+        #Test all of the rows
+        for row in self.board:
+            if set(row) == test_set:
+                pass
+            else:
+                return False
+            
+        #Test all of the columns
+        i = 0
+        while i < size:
+            j = 0
+            column = []
+            while j < size:
+                column.append(self.board[j][i])
+                j = j + 1
+            
+            if set(column) == test_set:
+                pass
+            else:
+                return False
+            
+            i = i + 1
+    
+        #Test nxn squares
+        seed_squares = []
+        i = 0
+        while i < square_size:
+            j = 0
+            while j < square_size:
+                seed_squares.append([i*square_size, j*square_size])
+                j = j + 1
+            i = i + 1
+        
+        for square in seed_squares:
+            row = square[0]
+            column = square[1]
+            numbers = set()
+            i = 0
+            while i < square_size:
+                j = 0
+                while j < square_size:
+                    numbers.add(self.board[row + i][column + j])
+                    j = j + 1
+                i = i + 1
+            
+            if set(numbers) == test_set:
+                pass
+            else:
+                return False
+        
+        return True
