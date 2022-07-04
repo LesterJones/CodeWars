@@ -1,0 +1,73 @@
+from itertools import combinations
+import numpy as np
+
+#Find the number of triangles in a set
+
+def howManyTriangles(points):
+    candidate_triangles = combinations(points, 3)
+    candidate_triangles = list(candidate_triangles)
+    number_of_triangles = 0
+    #Find determinate of the 3 points.  If det == 0 the points do not form a triangle.
+    for candidate in candidate_triangles:
+        mtrx = [[candidate[0][0],candidate[0][1],1],
+                [candidate[1][0],candidate[1][1],1],
+                [candidate[2][0],candidate[2][1],1]]
+        if (np.linalg.det(mtrx)) == 0:
+            pass
+        else:
+            number_of_triangles = number_of_triangles + 1
+    
+    return number_of_triangles
+    
+    
+def count_col_triang(input_):
+
+    #Determine the number of points
+    number_of_points = len(input_)
+    
+    #Determine the number of colors
+    set_of_colors = set()
+    for point in input_:
+        set_of_colors.add(point[1])
+    number_of_colors = len(set_of_colors)
+    
+    #Make a list of all possible colors in alphabetical order
+    list_of_colors = list(set_of_colors)
+    list_of_colors.sort()
+    
+    #Make a set of points for each color 
+    #Find all the combinations of those points
+    #Send the combinations to a function to find and return the number of
+    #triangles within the combinations.
+    
+    triangles_per_color = list()
+    total_triangles = 0
+    for color in list_of_colors:
+        i = 0
+        points_of_color = list()
+        while i < number_of_points:
+            if input_[i][1] == color:
+                points_of_color.append(input_[i][0])
+            i = i + 1
+        number_of_triangles = howManyTriangles(points_of_color)
+        triangles_per_color.append([color, number_of_triangles])
+        total_triangles = total_triangles + number_of_triangles
+
+    #return triangles_per_color
+    #Determine the max number of triangles
+    max = 0
+    for entry in triangles_per_color:
+        if entry[1] > max:
+            max = entry[1]
+    #Determine all colors that have the max
+    colors = set()
+    for entry in triangles_per_color:
+        if (entry[1] == max) and (max > 0):
+            colors.add(entry[0])
+    colors = list(colors)
+    colors.sort()
+    #Add max to the end of the color list
+    if total_triangles > 0:
+        colors.append(max)
+    
+    return [number_of_points, number_of_colors, total_triangles, colors]
