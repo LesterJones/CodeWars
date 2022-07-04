@@ -1,0 +1,54 @@
+def who_wins_beggar_thy_neighbour(hand_1, hand_2):
+    player1 = [x[0] for x in hand_1]
+    player2 = [x[0] for x in hand_2]
+    
+    player1_turn = True
+    penalty = 0
+    discard_pile = []
+    royals = 'JQKA'
+    punishment = {'J':1, 'Q':2, 'K':3, 'A':4}
+    i = 0
+    while i < 10000:
+        #If game is won return the winner
+        if len(player1) == 0:
+            return 1
+        if len(player2) == 0:
+            return 0
+        #If there is a penalty in motion execute this code
+        if penalty != 0:
+            if player1_turn:
+                card = player1.pop(0)
+            else:
+                card = player2.pop(0)
+            penalty = penalty - 1
+            discard_pile.append(card)
+            if card in royals:
+                penalty = punishment[card]
+                player1_turn = not player1_turn
+                continue
+            if penalty == 0:
+                if player1_turn:
+                    player2.extend(discard_pile)
+                else:
+                    player1.extend(discard_pile)
+                discard_pile = []
+                player1_turn = not player1_turn
+                continue
+            else:
+                continue
+        #If there is no penalty in play.  Execute this code.
+            
+        if player1_turn:
+            card = player1.pop(0)
+        else:
+            card = player2.pop(0)
+        
+        discard_pile.append(card)
+        
+        if card in royals:
+            penalty = punishment[card]
+        
+        player1_turn = not player1_turn
+        
+    return None
+        
