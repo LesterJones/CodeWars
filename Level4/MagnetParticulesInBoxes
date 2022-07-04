@@ -1,0 +1,21 @@
+def calculate(k, n):
+    denominator = (n + 1) ** (2 * k)
+    denominator = k * denominator
+    if denominator > 1000000000:
+        return -1
+    
+    return 1 / denominator
+
+def doubles(maxk, maxn):
+    total = 0
+    k = 1
+    while k <= maxk:
+        n = 1
+        while n <= maxn:
+            sub = calculate(k, n)
+            if sub == -1:
+                break
+            total = total + calculate(k, n)
+            n = n + 1
+        k = k + 1
+    return total
