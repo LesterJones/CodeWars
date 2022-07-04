@@ -1,0 +1,31 @@
+
+from fractions import Fraction
+
+
+def calculate_next_pascal(pascal):
+    new_pascal = [1]
+    i = 0
+    while i < len(pascal) - 1:
+        new_pascal.append(pascal[i] + pascal[i+1])
+        i = i + 1
+    new_pascal.append(1)
+    return new_pascal
+
+    
+def bernoulli_number(n):
+    # Edge Case
+    if n == 0:
+        return 1
+    
+    pascal = [1, 2, 1]
+    coefficients = []
+    
+    while len(coefficients) < n:
+        last_multiplier = pascal[-2]
+        partial_pascal = pascal[1:-2]
+        products = [a * b for a, b in zip(partial_pascal, coefficients)]
+        total = sum(products)
+        coefficient = Fraction((-1 - total) / last_multiplier)
+        coefficients.append(coefficient)
+        pascal = calculate_next_pascal(pascal)
+    return coefficients[-1]
