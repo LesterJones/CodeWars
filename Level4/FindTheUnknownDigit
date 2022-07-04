@@ -1,0 +1,66 @@
+def solve_runes(runes):
+    print(runes)
+    expression = runes.replace('--','+')
+    
+    index_equals = expression.index("=")
+    
+    problem = expression[0: index_equals]
+    answer = expression[index_equals + 1::]
+    
+    #Find operation and separate the numbers
+    operation = ''
+    if '*' in problem:
+        operation = '*'
+        index = problem.index('*')
+        first_number = problem[0: index]
+        second_number = problem[index + 1::]
+    elif '+' in problem:
+        operation = '+'
+        index = problem.index('+')
+        first_number = problem[0: index]
+        second_number = problem[index + 1::]
+    else:
+        operation = '-'
+        i = 1
+        while i < len(problem):
+            if problem[i] == '-':
+                index = i
+                break
+            i = i + 1
+        first_number = problem[0: index]
+        second_number = problem[index + 1::]
+        
+    flag_zero = False
+    x = first_number.strip("-")
+    y = second_number.strip("-")
+    z = answer.strip("-")
+    
+    if len(x) > 1 and x[0] == '?':
+        flag_zero = True
+    if len(y) > 1 and y[0] == '?':
+        flag_zero = True
+    if len(z) > 1 and z[0] == '?':
+        flag_zero = True
+    
+    numbers = '0123456789'
+    numbers_in_problem = []
+    
+    for letter in runes:
+        if letter in numbers:
+            numbers_in_problem.append(int(letter))
+    
+    i = 0
+
+    while i in range(0, 10):
+        if i == 0 and flag_zero:
+            i = i + 1
+            continue
+        if i in numbers_in_problem:
+            i = i + 1
+            continue
+        x = problem.replace('?', str(i))
+        y = answer.replace('?', str(i))
+        if eval(x) == int(y):
+            return i
+        i = i + 1
+    return -1
