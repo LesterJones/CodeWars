@@ -1,0 +1,57 @@
+import math
+
+class Warrior():
+    
+    def __init__(self):
+        self.level = 1
+        self.experience = 100
+        self.rank = "Pushover"
+        self.achievements = list()
+        
+    def ranking(self):
+        ranking_dict = {0:"Pushover", 1:"Novice", 2:"Fighter", 3:"Warrior", 4:"Veteran", 
+                        5:"Sage", 6:"Elite", 7:"Conqueror", 8:"Champion", 9: "Master",
+                        10:"Greatest"}
+        x = self.experience
+        x = math.floor(x / 1000)
+        self.rank = ranking_dict[x]
+        level = self.experience
+        level = math.floor(level / 100)
+        self.level = level
+        
+    def battle(self, enemy_level):
+        difference = enemy_level - self.level
+        our_rank = math.floor(self.experience / 1000)
+        enemy_rank = math.floor(enemy_level / 10)
+        
+        if (enemy_level) < 1 or (enemy_level > 100):
+            return "Invalid level"
+        if enemy_level == self.level:
+            self.experience = self.experience + 10
+        elif enemy_level == (self.level - 1):
+            self.experience = self.experience + 5
+        elif (enemy_rank - our_rank >= 1) and (enemy_level - self.level >= 5):
+            return "You've been defeated"
+        elif enemy_level > self.level:
+            self.experience = self.experience + (20 * difference * difference)
+        if self.experience > 10000:
+            self.experience = 10000
+        
+        self.ranking()
+        if difference > 0:
+            return "An intense fight"
+        if difference == 0 or difference == -1:
+            return "A good fight"
+        if difference < -1:
+            return "Easy fight"
+             
+    def training(self, train):
+        if self.level >= train[2]:
+            self.experience = self.experience + train[1]
+            if self.experience > 10000:
+                self.experience = 10000
+            self.achievements.append(train[0])
+            self.ranking()
+            return train[0]
+        else:
+            return "Not strong enough"
