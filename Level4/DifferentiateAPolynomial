@@ -1,0 +1,40 @@
+def evaluate(piece, point):
+    eq = piece
+    if 'x' not in piece:
+        return 0
+    
+    if '^' not in eq:
+        eq = eq.replace('x', '')
+        if eq == '-':
+            eq = '-1'
+        if eq == '':
+            eq = '1'
+        return int(eq)
+    
+    parts = eq.split('^')
+    exponent = int(parts[1])
+    base = parts[0]
+    base = base.replace('x', '')
+    if base == '':
+        base = '1'
+    if base == '-':
+        base = '-1'
+    base = int(base)
+    
+    base = base * exponent
+    exponent = exponent - 1
+    
+    return (base) * (point ** exponent)
+
+def differentiate(equation, point):
+    pieces = equation
+    pieces = pieces.replace('-', '+-')
+    pieces = pieces.split('+')
+    if pieces[0] == '':
+        pieces.pop(0)
+    
+    total = 0
+    for piece in pieces:
+        total = total + evaluate(piece, point)
+        
+    return total
