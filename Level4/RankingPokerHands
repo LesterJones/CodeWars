@@ -1,0 +1,134 @@
+def hand_rank(hand):
+    ranks = {'high_card' : 0, 'pair' : 1, 'two_pair': 2, 'three_of_a_kind': 3,
+             'straight': 4, 'flush': 5, 'full_house': 6, 'four_of_a_kind': 7,
+             'straight_flush': 8, 'royal_flush': 9}
+        
+    suits = set()
+    i = 1
+    while i <= 13:
+        suits.add(hand[i])
+        i = i + 3
+        
+    if len(suits) == 1:
+        isFlush = True
+    else:
+        isFlush = False
+        
+    cards = []
+    i = 0
+    while i <= 12:
+        cards.append(hand[i])
+        i = i + 3
+        
+    card_rank = 'AKQJT98765432'
+    
+    #Reorder the cards
+    i = 0
+    cards2 = []
+    while i < len(card_rank):
+        card = card_rank[i]
+        count = cards.count(card)
+        j = 0
+        while j < count:
+            cards2.append(card)
+            j = j + 1
+        i = i + 1
+    
+    cards = cards2
+    
+    str_hand = ''
+    for entry in cards:
+        str_hand = str_hand + entry
+    if str_hand in card_rank:
+        isStraight = True
+    else:
+        isStraight = False
+        
+    if isStraight and isFlush and cards[0] == 'A':
+        return [ranks['royal_flush'], cards]
+    
+    if isStraight and isFlush:
+        return [ranks['straight_flush'], cards]
+    
+    if isFlush:
+        return [ranks['flush'], cards]
+    
+    if isStraight:
+        return [ranks['straight'], cards]
+    
+    i = 0
+    ref4 = []
+    ref3 = []
+    ref2 = []
+    ref1 = []
+    while i < len(card_rank):
+        card = card_rank[i]
+        count = cards.count(card)
+        if count == 4:
+            ref4.append(card)
+        elif count == 3:
+            ref3.append(card)
+        elif count == 2:
+            ref2.append(card)
+        elif count == 1:
+            ref1.append(card)
+        i = i + 1
+
+    cards2 = []    
+    if len(ref4) == 1:
+        card = ref4[0]
+        cards2 = [card, card, card, card, ref1[0]]
+        return [ranks['four_of_a_kind'], cards2]
+    
+    if len(ref3) == 1 and len(ref2) == 1:
+        cards2 = [ref3[0], ref3[0], ref3[0], ref2[0], ref2[0]]
+        return [ranks['full_house'], cards2]
+        
+    if len(ref3) == 1:
+        cards2 = [ref3[0], ref3[0], ref3[0], ref1[0], ref1[1]]
+        return [ranks['three_of_a_kind'], cards2]
+    
+    if len(ref2) == 2:
+        cards2 = [ref2[0], ref2[0], ref2[1], ref2[1], ref1[0]]
+        return [ranks['two_pair'], cards2]
+    
+    if len(ref2) == 1:
+        cards2 = [ref2[0], ref2[0], ref1[0], ref1[1], ref1[2]]
+        return [ranks['pair'], cards2]
+    
+    return [ranks['high_card'], cards]
+
+
+class PokerHand(object):
+
+    def __init__(self, hand):
+        self.hand = hand
+
+        
+    def compare_with(self, other):
+        
+        rank1 = hand_rank(self.hand)
+        rank2 = hand_rank(other.hand)
+        
+        if rank1[0] > rank2[0]:
+            return 'Win'
+        elif rank1[0] < rank2[0]:
+            return 'Loss'
+        
+        card_ranking = 'AKQJT98765432'
+        
+        i = 0
+        hand1 = rank1[1]
+        hand2 = rank2[1]
+
+        while i < 5:
+            index1 = card_ranking.index(hand1[i])
+            index2 = card_ranking.index(hand2[i])
+            
+            if index1 < index2:
+                return 'Win'
+            if index2 < index1:
+                return 'Loss'
+            i = i + 1
+        
+        return 'Tie'
