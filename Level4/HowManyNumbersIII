@@ -1,0 +1,35 @@
+def construct_increasing_numbers(digs):
+    bases = ['1','2','3','4','5','6','7','8','9']
+    iteration = 2
+    while iteration <= digs:
+        new_bases = []
+        for base in bases:
+            number = int(base[-1])
+            j = number
+            while j < 10:
+                new_bases.append(base + str(j))
+                j = j + 1
+        bases = new_bases
+        iteration += 1
+    return (bases)
+    
+    
+    
+def find_all(sum_dig, digs):
+    increasing_numbers = construct_increasing_numbers(digs)
+    
+    good_answers = []
+    
+    for number in increasing_numbers:
+        digits = list(number)
+        digits = [int(x) for x in digits]
+        total = sum(digits)
+        if total == sum_dig:
+            good_answers.append(int(number))
+            
+    if len(good_answers) == 0:
+        return []
+    
+    return [len(good_answers), good_answers[0], good_answers[-1]]
+    
+    print(good_answers)
