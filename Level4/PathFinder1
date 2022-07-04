@@ -1,0 +1,33 @@
+def path_finder(maze):
+    maze2 = maze.split("\n")
+    check_squares = [[-1,0],[0,1],[1,0],[0,-1]]
+    
+    x = 0
+    y = 0
+    length = len(maze2)
+    
+    visited_squares = []
+    queue = [[0,0]]
+    how_many_moves = {(0,0):0}
+    
+    while x != length-1 or y != length-1:
+        new_square = queue.pop(0)
+        visited_squares.append(new_square)
+        x = new_square[0]
+        y = new_square[1]
+        if x == length - 1 and y == length - 1:
+            return True
+        for square in check_squares:
+            new_x = x + square[0]
+            new_y = y + square[1]
+            if new_x >= 0 and new_y >= 0 and new_x < length and new_y < length:
+                if maze2[new_x][new_y] == 'W':
+                    pass
+                else:
+                    if ([new_x, new_y] not in visited_squares) and ([new_x, new_y] not in queue):
+                        queue.append([new_x, new_y])
+                        how_many_moves[(new_x, new_y)] = how_many_moves[(x,y)] + 1
+        if len(queue) == 0:
+            return False
+    
+    return True
