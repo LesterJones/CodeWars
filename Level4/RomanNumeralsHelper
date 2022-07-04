@@ -1,0 +1,24 @@
+class RomanNumerals():
+    def __init__(self):
+        self.x = 1
+
+    def to_roman(number):
+        num_dict = {1000:'M',900:'CM',500:'D',400:'CD',100:'C',90:'XC',50:'L',40:'XL',10:'X',9:'IX',5:'V',4:'IV',1:'I'}
+        total = number
+        answer = ''
+        for key in num_dict:
+            while total >= key:
+                answer = answer + num_dict[key]
+                total = total - key
+        return answer            
+        
+        
+    def from_roman(str):
+        total = 0
+        num_dict = {'CM':900, 'M':1000, 'CD':400, 'D':500, 'XC':90, 'C':100, 'XL':40, 'L':50, 'IX':9, 'X':10, 'IV':4, 'V':5, 'I':1}
+        number = str
+        for key in num_dict:
+            while key in number:
+                total = total + num_dict[key]
+                number = number.replace(key, '', 1)
+        return total
