@@ -1,0 +1,27 @@
+def cut_log(p, n):
+    
+    if n == 0:
+        return p[0]
+    
+    prices = p
+    length = n
+    
+    optimal = [0, prices[1]]
+    
+    i = 2
+    while i <= n:
+        j = 1
+        k = i - 1
+        
+        values = []
+        values.append(prices[i])
+        while k > 0:
+            values.append(prices[j] + optimal[k])
+            k = k - 1
+            j = j + 1
+        maximum = max(values)
+        optimal.append(maximum)
+        
+        i = i + 1
+    
+    return optimal[-1]
