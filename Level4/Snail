@@ -1,0 +1,71 @@
+def snail(snail_map):
+    
+    #Eliminate empty maps
+    if snail_map == [[]]:
+        return []
+    
+    snail_array = list()
+    number_of_elements = len(snail_map) ** 2
+    
+    #Create directions to move around matrix
+    directions = ["right","down","left","up"]
+    current_direction = 1
+    
+    y_position = 0
+    x_position = 0
+    snail_array.append(snail_map[0][0])
+    
+    #Set some upper and lower bounds (bounds will change when we hit an edge)
+    min_x = 0
+    max_x = len(snail_map) - 1
+    min_y = 1
+    max_y = len(snail_map) - 1
+    
+    
+    #Try moving in current direction
+    #If you can move: move and record it
+    #If you can't move: change direction and try again
+    
+    while len(snail_array) < number_of_elements:
+        
+        if current_direction == 1: #right
+            if x_position + 1 > max_x:
+                current_direction = 2 #down
+                max_x = max_x - 1
+                continue
+            else:
+                x_position = x_position + 1
+                snail_array.append(snail_map[y_position][x_position])
+                continue
+        
+        if current_direction == 2: #down
+            if y_position + 1 > max_y:
+                current_direction = 3 #left
+                max_y = max_y - 1
+                continue
+            else:
+                y_position = y_position + 1
+                snail_array.append(snail_map[y_position][x_position])
+                continue
+                
+        if current_direction == 3: #left
+            if x_position - 1 < min_x:
+                current_direction = 4 #up
+                min_x = min_x + 1
+                continue
+            else:
+                x_position = x_position - 1
+                snail_array.append(snail_map[y_position][x_position])
+                continue
+                
+        if current_direction == 4: #up
+            if y_position - 1 < min_y:
+                current_direction = 1 #right
+                min_y = min_y + 1
+                continue
+            else:
+                y_position = y_position - 1
+                snail_array.append(snail_map[y_position][x_position])
+                continue
+    
+    return snail_array
