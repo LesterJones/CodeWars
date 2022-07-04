@@ -1,0 +1,41 @@
+import math
+
+def runoff(voters):
+    half_of_voters = len(voters) / 2
+    results = voters
+    i = 0
+    while i < len(voters[0]):
+        votes = []
+        candidates = results[0]
+        for result in results:
+            votes.append(result[0])
+        maximum = 0
+        winner = ''
+        minimum = 10000
+        losers = []
+        for candidate in candidates:
+            how_many = votes.count(candidate)
+            if how_many > maximum:
+                maximum = how_many
+                winner = candidate
+            if how_many < minimum:
+                losers = [candidate]
+                minimum = how_many
+                continue
+            elif how_many == minimum:
+                losers.append(candidate)
+        if maximum > half_of_voters:
+            return winner
+        if len(losers) == len(candidates):
+            return None
+        new_results = []
+        for result in results:
+            update_row = []
+            for entry in result:
+                if entry in losers:
+                    pass
+                else:
+                    update_row.append(entry)
+            new_results.append(update_row)
+        results = new_results
+        i = i + 1
