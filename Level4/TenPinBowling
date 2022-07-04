@@ -1,0 +1,59 @@
+def bowling_score(frames):
+    
+    score_card = frames
+    score_card = frames.split()
+    throws_in_frame10 = len(score_card[9])
+    score_card = frames.replace(" ", "")
+    score_card = list(score_card)
+    
+    next_throw = 0
+    next_throw2 = 0
+    
+    length = len(score_card)
+    
+    # Calculate 10 Frame
+    i = 1
+    score = 0
+    
+    while i <= throws_in_frame10:
+        if score_card[-i] == 'X':
+            throw = 10
+            score = score + 10
+            next_throw2 = next_throw
+            next_throw = throw
+        if score_card[-i] == '/':
+            throw = (10 - int(score_card[-i - 1]))
+            score = score + throw
+            next_throw2 = next_throw
+            next_throw = throw
+        if (score_card[-i] != 'X') and (score_card[-i] != '/'):
+            throw = int(score_card[-i])
+            score = score + throw
+            next_throw2 = next_throw
+            next_throw = throw
+        i = i + 1
+        
+    # Calculate the other 9 frames going backward
+    length = len(score_card) - throws_in_frame10
+
+    i = length - 1
+    
+    while i >= 0:
+        if score_card[i] == 'X':
+            throw = 10
+            score = score + throw + next_throw + next_throw2
+            next_throw2 = next_throw
+            next_throw = throw
+        if score_card[i] == '/':
+            throw = (10 - int(score_card[i - 1]))
+            score = score + throw + next_throw
+            next_throw2 = next_throw
+            next_throw = throw
+        if (score_card[i] != 'X') and (score_card[i] != '/'):
+            throw = int(score_card[i])
+            score = score + throw
+            next_throw2 = next_throw
+            next_throw = throw
+        i = i - 1
+    
+    return score
