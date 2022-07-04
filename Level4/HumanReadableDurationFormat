@@ -1,0 +1,81 @@
+import math
+
+
+def format_duration(seconds):
+    seconds_left = seconds
+    if seconds_left == 0:
+        return "now"
+    
+    counter = 0
+    
+    years = math.floor(seconds_left / 31536000)
+    seconds_left = seconds_left - (years * 31536000)
+    if years > 0:
+        counter = counter + 1
+    
+    days = math.floor(seconds_left / 86400)
+    seconds_left = seconds_left - (days * 86400)
+    if days > 0:
+        counter = counter + 1
+    
+    hours = math.floor(seconds_left / 3600)
+    seconds_left = seconds_left - (hours * 3600)
+    if hours > 0:
+        counter = counter + 1
+        
+    minutes = math.floor(seconds_left / 60)
+    seconds_left = seconds_left - (minutes * 60)
+    if minutes > 0:
+        counter = counter + 1
+        
+    if seconds_left > 0:
+        counter = counter + 1
+    
+    years = int(years)
+    days = int(days)
+    hours = int(hours)
+    minutes = int(minutes)
+    seconds_left = int(seconds_left)
+    
+    answer = str()
+    
+    while counter > 0:
+        if years > 0:
+            if years == 1:
+                answer = answer + "1 year"
+            else:
+                answer = answer + str(years) + " years"
+            years = 0
+        elif days > 0:
+            if days == 1:
+                answer = answer + "1 day"
+            else:
+                answer = answer + str(days) + " days"
+            days = 0
+        elif hours > 0:
+            if hours == 1:
+                answer = answer + "1 hour"
+            else:
+                answer = answer + str(hours) + " hours"
+            hours = 0
+        elif minutes > 0:
+            if minutes == 1:
+                answer = answer + "1 minute"
+            else:
+                answer = answer + str(minutes) + " minutes"
+            minutes = 0
+        elif seconds_left > 0:
+            if seconds_left == 1:
+                answer = answer + "1 second"
+            else:
+                answer = answer + str(seconds_left) + " seconds"
+            return answer
+        
+        counter = counter - 1
+        if counter > 1:
+            answer = answer + ", "
+        if counter == 1:
+            answer = answer + " and "
+    
+    return answer
+        
