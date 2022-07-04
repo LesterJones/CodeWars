@@ -1,0 +1,38 @@
+def prime_factors(lst):
+    
+    factors = set()
+
+    for number in lst:
+        number = abs(number)
+        
+        while number % 2 == 0 and number != 1:
+            
+            factors.add(2)
+            number = int(number / 2)
+
+        divisor = 3
+        while number > 1:
+            if number % divisor == 0:
+                factors.add(divisor)
+                number = int(number / divisor)
+                continue
+            divisor = divisor + 2
+    return factors
+    
+def sum_for_list(lst):
+    
+    factors = prime_factors(lst)
+    factors = list(factors)
+    factors.sort()
+    
+    answer = []
+    
+    for factor in factors:
+        numerators = []
+        for number in lst:
+            if number % factor == 0:
+                numerators.append(number)
+        total = sum(numerators)
+        answer.append([factor, total])
+    
+    return answer
