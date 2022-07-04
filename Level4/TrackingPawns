@@ -1,0 +1,126 @@
+def pawn_move_tracker(moves):
+    board = [
+    [".",".",".",".",".",".",".","."],
+    ["p","p","p","p","p","p","p","p"],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    ["P","P","P","P","P","P","P","P"],
+    [".",".",".",".",".",".",".","."]
+    ]
+    
+    row_dict = {"8":0, "7":1, "6":2, "5":3, "4":4, "3":5, "2":6, "1":7}
+    column_dict = {"a":0, "b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
+    white_pawns = [[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]
+    black_pawns = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]]
+    
+    white_move = True
+    print(moves)
+    for move in moves:               
+        print(move)
+        print(white_pawns)
+        print(black_pawns)
+        print("")
+        row = row_dict[move[-1]]
+        column = column_dict[move[-2]]
+        capture_column = column_dict[move[0]]
+        if white_move:
+            capture_row = row + 1
+        else:
+            capture_row = row - 1
+            
+    #Deal with captures first
+        if "x" in move:
+            if white_move:
+                if [row, column] in black_pawns and [capture_row, capture_column] in white_pawns:
+                    black_pawns.remove([row,column])
+                    white_pawns.remove([capture_row, capture_column])
+                    white_pawns.append([row,column])
+                else:
+                    return move + " is invalid"
+            
+            if not(white_move):
+                if [row, column] in white_pawns and [capture_row, capture_column] in black_pawns:
+                    white_pawns.remove([row,column])
+                    black_pawns.remove([capture_row, capture_column])
+                    black_pawns.append([row,column])
+                else:
+                    return move + " is invalid"
+            
+            white_move = not(white_move)
+            continue
+            
+    #Deal with possible double first move.
+        if white_move and row == 4:
+            if [row, column] not in black_pawns and [row + 1, column] not in black_pawns:
+                if [row + 1, column] in white_pawns:
+                    white_pawns.remove([row + 1, column])
+                    white_pawns.append([row, column])
+                    white_move = not(white_move)
+                    continue
+                elif [row + 2, column] in white_pawns:
+                    white_pawns.remove([row + 2, column])
+                    white_pawns.append([row, column])
+                    white_move = not(white_move)
+                    continue
+                else:
+                    return move + " is invalid"
+            else:
+                return move + " is invalid"
+        
+        if not(white_move) and row == 3:
+            
+            if [row, column] not in white_pawns and [row - 1, column] not in white_pawns:
+                
+                if [row - 1, column] in black_pawns:
+                    black_pawns.remove([row - 1, column])
+                    black_pawns.append([row, column])
+                    white_move = not(white_move)
+                    continue
+                elif [row - 2, column] in black_pawns:
+                    black_pawns.remove([row - 2, column])
+                    black_pawns.append([row, column])
+                    white_move = not(white_move)
+                    continue
+                else:
+                    return move + " is invalid"
+            else:
+                return move + " is invalid"  
+                
+    #Deal with with all other moves
+        if white_move:
+            if [row, column] not in black_pawns and [row + 1, column] in white_pawns:
+                white_pawns.remove([row + 1, column])
+                white_pawns.append([row, column])
+                white_move = not(white_move)
+                continue
+            else:
+                return move + " is invalid"
+            
+        if not(white_move):
+            if [row, column] not in white_pawns and [row - 1, column] in black_pawns:
+                black_pawns.remove([row - 1, column])
+                black_pawns.append([row, column])
+                white_move = not(white_move)
+                continue
+            else:
+                return move + " is invalid"
+    
+    #Once all of the moves are made we need to re-write the board with the pawns in the correct places.
+    
+    board = [['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.'], 
+             ['.', '.', '.', '.', '.', '.', '.', '.']]
+    
+    for pawn in white_pawns:
+        board[pawn[0]][pawn[1]] = "P"
+    for pawn in black_pawns:
+        board[pawn[0]][pawn[1]] = "p"
+        
+    return board
