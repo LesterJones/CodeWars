@@ -1,0 +1,28 @@
+def decompose(n):
+    goal = n ** 2
+    total = (n-1) ** 2
+    seq = [n - 1]
+    seq2 = [(n-1) ** 2]
+    while seq[0] != 1:
+        while seq[-1] == 1:
+            seq.pop()
+            seq2.pop()
+            seq2.pop()
+            seq[-1] = seq[-1] - 1
+            seq2.append(seq[-1] ** 2)
+            if seq[0] == 1:
+                return None
+        total = sum(seq2)
+        maximum = goal - total
+        i = seq[-1] - 1
+        while i >= 1:
+            if i ** 2 <= maximum:
+                seq.append(i)
+                seq2.append(i ** 2)
+                break
+            i = i - 1
+        total = sum(seq2)
+        if total == goal:
+            seq.reverse()
+            return seq
+    return None
