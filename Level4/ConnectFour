@@ -1,0 +1,111 @@
+def print_board(board):
+    i = -1
+    while i > -7:
+        i = i -1
+
+def get_diagonals(board):
+    start_squares = [(2,0),(1,0),(0,0),(0,1),(0,2),(0,3)]
+    diagonals = []
+    
+    #Find the upward facing diagonals
+    for square in start_squares:
+        new_diagonal = ''
+        row = square[0]
+        column = square[1]
+        while row < 6 and column < 7:
+            new_diagonal = new_diagonal + board[row][column]
+            row = row + 1
+            column = column + 1
+        diagonals.append(new_diagonal)
+        
+    start_squares = [(3,0),(4,0),(5,0),(5,1),(5,2),(5,3)]
+    
+    #Find the downward facing diagonals
+    for square in start_squares:
+        new_diagonal = ''
+        row = square[0]
+        column = square[1]
+        while row >=0 and column < 7:
+            new_diagonal = new_diagonal + board[row][column]
+            row = row - 1
+            column = column + 1
+        diagonals.append(new_diagonal)
+    
+    return diagonals
+    
+def validate_game_board(board):
+    #Check Rows
+    for row in board:
+        row1 = ''.join(row)
+        if '-2-2-2-2' in row1 or '1111' in row1:
+            return True
+    
+    #Check Columns
+    i = 0
+    while i < 7:
+        column = []
+        j = 0
+        while j < 6:
+            column.append(board[j][i])
+            j = j + 1
+        column1 = ''.join(column)
+        if '-2-2-2-2' in column1 or '1111' in column1:
+            return True
+        i = i + 1
+    
+    #Check the Diagonals
+    diagonals = get_diagonals(board)
+    for diagonal in diagonals:
+        if '-2-2-2-2' in diagonal or '1111' in diagonal:
+            return True
+        
+    return False
+    
+    
+def create_game_board():
+    board = []
+    i = 0
+    while i < 6:
+        j = 0
+        row = []
+        while j < 7:
+            row.append('0')
+            j = j + 1
+        board.append(row)
+        i = i + 1
+    return board
+
+
+def get_moves(lst):
+    moves = []
+    columns_dict = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6}
+    for entry in lst:
+        moves.append(columns_dict[entry[0]])
+    return moves
+
+
+def who_is_winner(pieces_position_list):
+    
+    board = create_game_board()
+    first_player = pieces_position_list[0][2::]
+    second_player = pieces_position_list[1][2::]
+    moves = get_moves(pieces_position_list)
+    pointers = [0,0,0,0,0,0,0]
+    
+    move = 0
+    while move < len(moves):
+        column = moves[move]
+        row = pointers[column]
+        if move % 2 == 0:
+            board[row][column] = '1'
+        else:
+            board[row][column] = '-2'
+        pointers[column] = pointers[column] + 1
+        if validate_game_board(board):
+            if move % 2 == 0:
+                return first_player
+            else:
+                return second_player
+        move = move + 1
+    print_board(board)
+    return 'Draw'
