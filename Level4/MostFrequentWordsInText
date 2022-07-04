@@ -1,0 +1,36 @@
+def top_3_words(text):
+    phrase = text
+    #Ok, I think I will start by weeding out punctuation,
+    punctuation = ['.','?','!','_',':',';','/','-',',']
+    
+    #Condition the string
+    for entry in punctuation:
+        phrase = phrase.replace(entry, " ")
+        phrase = phrase.replace("  ", " ")
+    phrase = phrase.replace("''","'")
+    phrase = phrase.replace("''","'")
+    phrase = phrase.replace("''","'")
+    phrase = phrase.replace(" ' ", " ")
+    phrase = phrase.replace("  ", " ")
+    phrase = phrase.replace("  ", " ")
+    phrase = phrase.lower()
+    phrase = phrase.strip()
+    #Make a dictionary that counts the occurances of each word.
+    phrase = phrase.split(" ")
+    words = dict()
+    for word in phrase:
+        if word in words:
+            words[word] = words[word] + 1
+        else:
+            words[word] = 1
+    print('' in words)
+    if '' in words:
+        del words['']
+    #Check the dictionary for the three largest answers.
+    answers = list()
+    while len(words) > 0 and len(answers) < 3:
+        maximum = max(words, key = words.get)        
+        answers.append(maximum)
+        del words[maximum]
+    
+    return answers
