@@ -1,0 +1,35 @@
+#tree function is the recursive part that records the values going down the tree
+
+def tree(node, lvl = 1):
+    
+    if node is None:
+        return []
+    
+    answer = [[node.value, lvl]]
+    
+    x = tree(node.left, lvl + 1)
+    y = tree(node.right, lvl + 1)
+    
+    if x is None or x == []:
+        pass
+    else:
+        answer.extend(tree(node.left, lvl + 1))
+    if y is None or y == []:
+        pass
+    else:
+        answer.extend(tree(node.right, lvl + 1))
+    
+    return answer
+
+
+def tree_by_levels(node, lvl = 1):
+    answer = tree(node, 1)
+    final_solution = []
+    i = 1
+    while len(final_solution) < len(answer):
+        for entry in answer:
+            if entry[1] == i:
+                final_solution.append(entry[0])
+        i = i + 1
+
+    return final_solution
