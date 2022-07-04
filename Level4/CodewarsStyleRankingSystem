@@ -1,0 +1,46 @@
+class User():
+    def __init__(self):
+        self.rank = -8
+        self.progress = 0
+        
+    def inc_progress(self, problem_rank):
+        if problem_rank < -8 or problem_rank > 8 or problem_rank == 0:
+            raise Exception("Error!")
+
+        difference = problem_rank - self.rank
+        if (problem_rank * self.rank) < 0:
+            if difference > 0:
+                difference = difference - 1
+            if difference < 0:
+                difference = difference + 1
+        total_progress = 0
+        if difference < -1:
+            total_progress = total_progress + 0
+        elif difference == -1:
+            total_progress = total_progress + 1
+        elif difference == 0:
+            total_progress = total_progress + 3
+        else:
+            total_progress = total_progress + 10 * (difference ** 2)
+        
+        current_progress = self.progress
+        needed = 100 - current_progress
+        if total_progress >= needed and needed != 100:
+            self.rank = self.rank + 1
+            self.progress = 0
+            total_progress = total_progress - needed
+        
+        if self.rank == 0:
+            self.rank = self.rank + 1
+        
+        while total_progress >= 100:
+            self.rank = self.rank + 1
+            total_progress = total_progress - 100
+            if self.rank == 0:
+                self.rank = self.rank + 1
+                
+        self.progress = self.progress + total_progress
+        
+        if self.rank >= 8:
+            self.rank = 8
+            self.progress = 0
