@@ -1,0 +1,21 @@
+class Machine:
+    def __init__(self):
+        self.best_answer = dict()
+        self.last_command = False
+        self.actions = ACTIONS()
+        
+    def command(self, cmd, num):
+        self.last_command = cmd
+        if cmd in self.best_answer:
+            best_answer = self.best_answer[cmd]
+            eq = self.actions[best_answer]
+            return eq(num)
+        else:
+            self.best_answer[cmd] = 0
+            eq = self.actions[0]
+            return eq(num)
+    
+    def response(self,res):
+        if res == False:
+            command = self.last_command
+            self.best_answer[command] = self.best_answer[command] + 1
