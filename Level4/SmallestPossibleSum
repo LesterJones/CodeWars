@@ -1,0 +1,16 @@
+def solution(a):
+
+    b = a
+    minimum = min(b)
+
+    i = 0
+    while i < len(b):
+        x = b[i] % minimum
+        if x == 1:
+            minimum = 1
+            break
+        if x < minimum and x != 0:
+            minimum = x
+        i = i + 1
+    
+    return minimum * len(a)
