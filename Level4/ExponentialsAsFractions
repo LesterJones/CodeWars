@@ -1,0 +1,25 @@
+from fractions import Fraction
+from math import factorial
+
+
+def expand(x, digit):
+    # First let's make sure x is a fraction.
+    denominator = 1
+    while x % 1 != 0:
+        x = x * 10
+        denominator = denominator * 10
+    x = int(x)
+    x = Fraction(x, denominator)
+    
+    # Now that we have x as a fraction we can compute each term of the Tailer Expansion
+    # as a fraction, and add it to our answer which is also a fraction.
+    answer = Fraction(1, 1)
+    i = 1
+    while len(str(answer.numerator)) < digit:
+        numerator = x ** i
+        denominator = factorial(i)
+        new_term = Fraction(numerator, denominator)
+        answer = answer + new_term
+        i = i + 1
+    
+    return [answer.numerator, answer.denominator]
