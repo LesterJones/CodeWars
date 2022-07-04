@@ -1,0 +1,73 @@
+def mix(s1, s2):
+
+    letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+    
+    occurances_s1 = list()
+    occurances_s2 = list()
+    
+    for letter in letters:
+        occurances_s1.append(s1.count(letter))
+        occurances_s2.append(s2.count(letter))
+        
+    winner = list()
+    maximums = list()
+    
+    i = 0
+    while i < 26:
+        if occurances_s1[i] > occurances_s2[i]:
+            winner.append("1")
+            maximums.append(occurances_s1[i])
+        elif occurances_s1[i] < occurances_s2[i]:
+            winner.append("2")
+            maximums.append(occurances_s2[i])
+        else:
+            winner.append("=")
+            maximums.append(occurances_s1[i])
+        i = i + 1
+        
+        
+    i = max(maximums)
+    answer = str()
+    
+    print(i)
+    
+    while i > 1:
+        win_1 = list()
+        win_2 = list()
+        ties = list()
+        j = 0
+        while j < 26:
+            if maximums[j] == i:
+                if winner[j] == "=":
+                    ties.append(letters[j])
+                elif winner[j] == "1":
+                    win_1.append(letters[j])
+                elif winner[j] == "2":
+                    win_2.append(letters[j])
+                else:
+                    return "Error 1"
+            j = j + 1
+        
+        win_1.sort()
+        win_2.sort()
+        ties.sort()
+        
+        if len(win_1) == 0 and len(ties) == 0 and len(win_2) == 0:
+            i = i - 1
+            continue
+        
+        for letter in win_1:
+            index = letters.index(letter)
+            answer = answer + winner[index] + ":" + letter * i + "/"
+        
+        for letter in win_2:
+            index = letters.index(letter)
+            answer = answer + winner[index] + ":" + letter * i + "/"
+        
+        for letter in ties:
+            index = letters.index(letter)
+            answer = answer + winner[index] + ":" + letter * i + "/"
+        
+        i = i - 1
+        
+    return answer.strip("/")
