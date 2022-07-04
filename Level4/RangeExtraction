@@ -1,0 +1,28 @@
+def solution(args):
+    
+    answer = str()
+    
+    i = 0
+    while i < len(args):
+        j = i + 1
+        test_number = args[i]
+        run = 1
+        while j < len(args):
+            if args[j] == test_number + 1:
+                test_number = args[j]
+                j = j + 1
+                run = run + 1
+                continue
+            break
+        j = j - 1
+        if run == 1:
+            answer = answer + str(args[i]) + ","
+        elif run == 2:
+            answer = answer + str(args[i]) + "," + str(args[i + 1]) + ","
+        else:
+            print(j)
+            answer = answer + str(args[i]) + "-" + str(args[j]) + ","
+        
+        i = i + run
+    
+    return answer.rstrip(",")
