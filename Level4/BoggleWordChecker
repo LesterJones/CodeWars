@@ -1,0 +1,74 @@
+def find_neighbors(point, board):
+    rows = len(board)
+    columns = len(board[0])
+    
+    x = point[0]
+    y = point[1]
+
+    moves = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+    
+    neighbors = []
+    
+    for move in moves:
+        x1 = x + move[0]
+        y1 = y + move[1]
+        if 0 <= x1 < rows and 0 <= y1 < columns:
+            neighbors.append((x1,y1))
+    
+    return neighbors
+    
+def find_letter(board, letter):
+    locations = []
+    i = 0
+    while i < len(board):
+        j = 0
+        while j < len(board[0]):
+            if board[i][j] == letter:
+                locations.append((i,j))
+            j = j + 1
+        i = i + 1
+    return locations
+
+def find_word(board, word):
+    
+    path = []
+    letters = list(word)
+    
+    search = list()
+    start_positions = find_letter(board, letters[0])
+    
+    search.append(start_positions)
+    #return 0
+    while len(search) > 0:
+        #Place backtracking up-front
+        if search[-1] == []:
+            search.pop()
+            if len(search) == 0:
+                return False
+            path.pop()
+            search[-1].pop()
+            continue
+            
+        if len(search) == len(letters):
+            return True
+        current_position = search[-1][-1]
+        path.append(current_position)
+        
+        neighbors = find_neighbors(current_position, board)
+        index_of_next = len(search)
+        next_letter = letters[index_of_next]
+        locations = []
+        for neighbor in neighbors:
+            if neighbor in path:
+                continue
+            x = neighbor[0]
+            y = neighbor[1]
+            if board[x][y] == next_letter:
+                locations.append(neighbor)
+        if len(locations) == 0:
+            search[-1].pop()
+            path.pop()
+        else:    
+            search.append(locations)
+
+    return False
