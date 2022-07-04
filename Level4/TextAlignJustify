@@ -1,0 +1,46 @@
+import re
+
+def justify(text, width):
+    words = text.split(' ')
+    answer = ''
+    while len(words) > 0:
+        line = ''
+        i = 0
+        while i < 1000:
+            if len(words) == 0:
+                break
+            word = words[0]
+            if len(word) + len(line) > width:
+                break
+            else:
+                line = line + word + ' '
+                words.pop(0)
+            i = i + 1
+        line = line.strip(' ')
+        if len(words) == 0:
+            answer = answer + line
+            continue
+        line_words = line.split(' ')
+        if len(line_words) == 1:
+            answer = answer + line_words[0] + '\n'
+            continue
+        how_many_slots = len(line_words) - 1
+        number_of_spaces_needed = width - len(''.join(line_words))
+        spacers = []
+        i = 0
+        while i < how_many_slots:
+            spacers.append(1)
+            i = i + 1
+        i = 0
+        while sum(spacers) < number_of_spaces_needed:
+            spacers[i % how_many_slots] = spacers[i % how_many_slots] + 1
+            i = i + 1
+        new_line = ''
+        i = 0
+        while i < len(line_words) - 1:
+            new_line = new_line + line_words[i] + spacers[i] * ' '
+            i = i + 1
+        new_line = new_line + line_words[-1]
+        answer = answer + new_line + '\n'
+    answer = answer.rstrip('\n')
+    return answer
