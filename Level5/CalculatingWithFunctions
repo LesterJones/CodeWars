@@ -1,0 +1,138 @@
+def zero(x = [None,None]):
+    if x[0] == None:
+        return [0, None]
+    if x[1] == "plus":
+        return 0 + x[0]
+    elif x[1] == "minus":
+        return 0 - x[0]
+    elif x[1] == "times":
+        return 0 * x[0]
+    elif x[1] == "divided":
+        return 0 // x[0]
+    return "Ooops"
+                
+def one(x = [None,None]): #your code here
+    if x[0] == None:
+        return [1, None]
+    if x[1] == "plus":
+        return 1 + x[0]
+    elif x[1] == "minus":
+        return 1 - x[0]
+    elif x[1] == "times":
+        return 1 * x[0]
+    elif x[1] == "divided":
+        return 1 // x[0]
+    return "Ooops"
+
+def two(x = [None,None]):
+    if x[0] == None:
+        return [2, None]
+    if x[1] == "plus":
+        return 2 + x[0]
+    elif x[1] == "minus":
+        return 2 - x[0]
+    elif x[1] == "times":
+        return 2 * x[0]
+    elif x[1] == "divided":
+        return 2 // x[0]
+    return "Ooops"
+
+def three(x = [None,None]):
+    if x[0] == None:
+        return [3, None]
+    if x[1] == "plus":
+        return 3 + x[0]
+    elif x[1] == "minus":
+        return 3 - x[0]
+    elif x[1] == "times":
+        return 3 * x[0]
+    elif x[1] == "divided":
+        return 3 // x[0]
+    return "Ooops"
+
+def four(x = [None,None]):
+    if x[0] == None:
+        return [4, None]
+    if x[1] == "plus":
+        return 4 + x[0]
+    elif x[1] == "minus":
+        return 4 - x[0]
+    elif x[1] == "times":
+        return 4 * x[0]
+    elif x[1] == "divided":
+        return 4 // x[0]
+    return "Ooops"
+    
+def five(x = [None,None]):
+    if x[0] == None:
+        return [5, None]
+    if x[1] == "plus":
+        return 5 + x[0]
+    elif x[1] == "minus":
+        return 5 - x[0]
+    elif x[1] == "times":
+        return 5 * x[0]
+    elif x[1] == "divided":
+        return 5 // x[0]
+    return "Ooops"
+
+def six(x = [None,None]):
+    if x[0] == None:
+        return [6, None]
+    if x[1] == "plus":
+        return 6 + x[0]
+    elif x[1] == "minus":
+        return 6 - x[0]
+    elif x[1] == "times":
+        return 6 * x[0]
+    elif x[1] == "divided":
+        return 6 // x[0]
+    return "Ooops"
+
+def seven(x = [None,None]):
+    if x[0] == None:
+        return [7, None]
+    if x[1] == "plus":
+        return 7 + x[0]
+    elif x[1] == "minus":
+        return 7 - x[0]
+    elif x[1] == "times":
+        return 7 * x[0]
+    elif x[1] == "divided":
+        return 7 // x[0]
+    return "Ooops"
+
+def eight(x = [None,None]):
+    if x[0] == None:
+        return [8, None]
+    if x[1] == "plus":
+        return 8 + x[0]
+    elif x[1] == "minus":
+        return 8 - x[0]
+    elif x[1] == "times":
+        return 8 * x[0]
+    elif x[1] == "divided":
+        return 8 // x[0]
+    return "Ooops"
+
+def nine(x = [None,None]):
+    if x[0] == None:
+        return [9, None]
+    if x[1] == "plus":
+        return 9 + x[0]
+    elif x[1] == "minus":
+        return 9 - x[0]
+    elif x[1] == "times":
+        return 9 * x[0]
+    elif x[1] == "divided":
+        return 9 // x[0]
+    return "Ooops"
+
+def plus(x = [None,None]): 
+    return [x[0], "plus"]
+def minus(x = [None,None]):
+    return [x[0], "minus"]
+def times(x = [None,None]):
+    return [x[0], "times"]
+def divided_by(x = [None,None]):
+    return [x[0], "divided"]
