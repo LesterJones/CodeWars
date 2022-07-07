@@ -1,0 +1,84 @@
+def damaged_or_sunk (board, attacks):
+    
+    #Change the board into one long array I can count occurances on
+    length = len(board)
+    i = 0
+    number_of_boats = 0
+    newboard = []
+    while i < length:
+        newboard = newboard + board[i]
+        i = i + 1
+        
+    #Determine the length of all possible boats
+    boat_a = newboard.count(1)
+    boat_b = newboard.count(2)
+    boat_c = newboard.count(3)
+    
+    #Count how many boats actually exist
+    total_boats = 0
+    if boat_a > 0:
+        total_boats = total_boats + 1
+    if boat_b > 0:
+        total_boats = total_boats + 1
+    if boat_c > 0:
+        total_boats = total_boats + 1
+        
+    #Determine how many times each boat is hit
+    
+    hits_a = 0
+    hits_b = 0
+    hits_c = 0
+    
+    #Attack numbers have to be mapped (Plus they are called in the opposite order)
+    for attack in attacks:
+        y = abs(attack[1] - length)
+        x = attack[0] - 1
+        
+        if board[y][x] == 1:
+            hits_a = hits_a + 1
+        if board[y][x] == 2:
+            hits_b = hits_b + 1
+        if board[y][x] == 3:
+            hits_c = hits_c + 1
+            
+    #Determine status of each boat
+    
+    sunk = 0
+    damaged = 0
+    not_touched = 0
+    points = 0
+    
+    if boat_a > 0:
+        if hits_a == 0:
+            not_touched = not_touched + 1
+            points = points -1
+        if hits_a == boat_a:
+            sunk = sunk + 1
+            points = points + 1
+        if (hits_a > 0) and (hits_a < boat_a):
+            damaged = damaged + 1
+            points = points + .5
+    
+    if boat_b > 0:
+        if hits_b == 0:
+            not_touched = not_touched + 1
+            points = points -1
+        if hits_b == boat_b:
+            sunk = sunk + 1
+            points = points + 1
+        if (hits_b > 0) and (hits_b < boat_b):
+            damaged = damaged + 1
+            points = points + .5
+            
+    if boat_c > 0:
+        if hits_c == 0:
+            not_touched = not_touched + 1
+            points = points -1
+        if hits_c == boat_c:
+            sunk = sunk + 1
+            points = points + 1
+        if (hits_c > 0) and (hits_c < boat_c):
+            damaged = damaged + 1
+            points = points + .5
+        
+    return {'sunk':sunk, 'damaged':damaged, 'not_touched': not_touched, 'points': points}
