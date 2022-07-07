@@ -1,0 +1,11 @@
+def variance(numbers): 
+    
+    total = sum(numbers)
+    mean = total / len(numbers)
+    
+    total = 0
+    for entry in numbers:
+        total = total + ((entry - mean) ** 2)
+    
+    variance = total / len(numbers)
+    return variance
