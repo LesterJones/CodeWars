@@ -1,0 +1,14 @@
+from itertools import combinations
+
+def choose_best_sum(t, k, ls):
+    maximum_distance = t
+    
+    combos = combinations(ls, k)
+    biggest = 0
+    for combo in combos:
+        if sum(combo) > biggest and sum(combo) <= t:
+            biggest = sum(combo)
+    if biggest > 0:
+        return biggest
+    else:
+        return None
