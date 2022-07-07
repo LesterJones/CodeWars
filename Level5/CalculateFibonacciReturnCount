@@ -1,0 +1,62 @@
+# Basic function to multiply two 2x2 matrices
+def mult_matrix(m1, m2):
+
+    a = m1[0][0] * m2[0][0] + m1[0][1] * m2[1][0]
+    b = m1[0][0] * m2[0][1] + m1[0][1] * m2[1][1]
+    c = m1[1][0] * m2[0][0] + m1[1][1] * m2[1][0]
+    d = m1[1][0] * m2[0][1] + m1[1][1] * m2[1][1]
+
+    return [[a, b],[c, d]]
+
+# Find the matrices we need to do our calculation
+def base_matrices(how_many, n):
+    if n >= 0:
+        matrices = [[[0,1],[1,1]]]
+    else:
+        matrices = [[[-1,1],[1,0]]]
+        
+    i = 1
+    while i < how_many:
+        matrix = matrices[-1]
+        matrices.append(mult_matrix(matrix, matrix))
+        i = i + 1
+        
+    matrices.reverse()
+    return matrices
+    
+# We will utilize the idea that the next fibonacci can be found using the matrix [[0,1],[1,1]]
+# the top right entry, index[0][1], is the current fibonacci.
+# To find the next fib we multiply the matrix by itself.
+# This means the nth fibonachi is in [matrix]^n
+
+# However, instead of doing that multiplication n times we can break down n into its binary components.
+# Then we can find only the matrices we need.
+    
+def fib(n):
+    binary = bin(abs(n))[2::]
+    matrices = base_matrices(len(binary), n)
+
+    idenity = [[1,0],[0,1]]
+    fib = idenity
+    
+    i = 0
+    while i < len(binary):
+        if binary[i] == '1':
+            fib = mult_matrix(fib, matrices[i])
+        i = i + 1
+    
+    return fib[0][1]
+
+def fib_digits(n):
+    fibonacci = str(fib(n))
+    answer = []
+    i = 0
+    while i <= 9:
+        occurrances = fibonacci.count(str(i))
+        if occurrances == 0:
+            i = i + 1
+            continue
+        answer.append((occurrances, i))
+        i = i + 1
+    answer.sort(reverse=True)
+    return answer
