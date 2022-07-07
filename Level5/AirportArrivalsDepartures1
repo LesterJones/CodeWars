@@ -1,0 +1,30 @@
+# Update one line given one line and one list of rotors
+def translate_a_line(lines, rotors):
+
+    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!@#&()|<>.:=-+*/0123456789'
+    length = 54
+    
+    letters = list(lines[0])
+    i = 0
+    while i < len(rotors[0]):
+        j = i
+        while j < len(letters):
+            index = characters.index(letters[j])
+            index = (index + rotors[0][i]) % length
+            letters[j] = characters[index]
+            j = j + 1
+        i = i + 1
+    word = ''.join(letters)
+    return word    
+    
+    
+# Combine all lines into one list, and return the answer.
+def flap_display(lines, rotors):
+    
+    answer = list()
+    i = 0
+    while i < len(lines):
+        line = translate_a_line([lines[i]], [rotors[i]])
+        answer.append(line)
+        i = i + 1
+    return answer
