@@ -1,0 +1,35 @@
+def score_hand(cards):
+    
+    #Set up a card:score dictionary and a counter for the number of aces in the hand
+    score_dict = {"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+                "10": 10, "J": 10, "Q": 10, "K": 10, "A": 1}
+    ace_counter = 0
+    possible_scores = list()
+    hand_score = 0
+    
+    #Count the hand score with Aces counted as 1
+    for card in cards:
+        hand_score = hand_score + score_dict[card]
+        if card == "A":
+            ace_counter = ace_counter + 1
+            
+    possible_scores.append(hand_score)
+    
+    #Find all possible scores by adding 10 for every ace
+    while ace_counter > 0:
+        hand_score = hand_score + 10
+        possible_scores.append(hand_score)
+        ace_counter = ace_counter - 1
+    
+    #Find all the scores under 21 and then sort for the highest score under 21 or the min score over 21
+    scores_under_21 = list()
+    minimum = min(possible_scores)
+    
+    for score in possible_scores:
+        if score <= 21:
+            scores_under_21.append(score)
+    
+    if scores_under_21:
+        return max(scores_under_21)
+    else:
+        return minimum
