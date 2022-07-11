@@ -1,0 +1,57 @@
+import math
+
+
+# There is a formula for overlapping circles.  It is quite long, and will be used in this function.
+# Usually there would be a third term d that is the distance between the two circles.
+# In this limited case our d == radius1.  radius1 is the field_radius in this case.
+
+def circle_overlap(radius1, radius2):
+    # I am going to break the formula into three terms & then combine them.
+    radii = [radius1, radius2]
+    radii.sort()
+    R = radii[0]
+    r = radii[1]
+    d = radius1
+    
+    term1 = r**2 * math.acos((d**2 + r**2 - R**2)/(2*d*r))
+    term2 = R**2 * math.acos((d**2 + R**2 - r**2)/(2*d*R))
+    term3 = .5 * math.sqrt((-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R))
+    
+    overlapping_area = term1 + term2 - term3
+    
+    return overlapping_area
+
+
+def get_rope_length(field_diameter, eaten_ratio):
+
+    field_radius = field_diameter / 2
+    
+    # Edge_cases
+    if eaten_ratio <= 0:
+        return 0
+    if eaten_ratio >= 1:
+        return field_diameter
+    
+    # Calculate the total area of the field
+    total_area = math.pi * ((field_diameter / 2) ** 2)
+
+    # We will use binary search to try to find the proper length of rope.
+    minimum_rope = 0
+    maximum_rope = field_diameter
+    test_length = field_diameter // 2
+    
+    # We will be searching for the increment where minimum_rope < eaten_ratio, and maximum_rope > eaten_ratio.
+    while maximum_rope - minimum_rope > 1:
+        area_eaten = circle_overlap(field_radius, test_length)
+        ratio_eaten = area_eaten / total_area
+
+        if ratio_eaten <= eaten_ratio:
+            minimum_rope = test_length
+        else:
+            maximum_rope = test_length
+        test_length = (minimum_rope + maximum_rope) // 2
+    
+    # Once minimum_rope and maximum_rope are one unit apart the minimum rope length should
+    # give us the correct answer.
+    
+    return minimum_rope
