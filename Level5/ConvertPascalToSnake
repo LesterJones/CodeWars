@@ -1,0 +1,21 @@
+def to_underscore(string):
+    
+    if isinstance(string, int):
+        return str(string)
+    
+    lower = 'qwertyuiopasdfghjklzxcvbnm1234567890'
+    upper = 'QWERTYUIOPASDFGHJKLZXCVBNM'
+    
+    answer = ''
+    
+    i = 0
+    while i < len(string):
+        letter = string[i]
+        if letter in upper:
+            answer = answer + '_' + letter.lower()
+        else:
+            answer = answer + letter
+        i = i + 1
+    
+    answer = answer.strip("_")
+    return answer
