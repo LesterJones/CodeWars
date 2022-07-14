@@ -1,0 +1,39 @@
+def find_LCD(lst):
+    denominators = []
+    for entry in lst:
+        denominators.append(entry[1])
+    while len(denominators) > 1:
+        numbers = [denominators.pop(), denominators.pop()]
+        numbers.sort()
+        y1 = numbers[1]
+        m1 = numbers[0]
+        y = y1
+        m = m1
+        i = 0
+        while i < 1000:
+            x = y // m
+            b = y - m*x
+            if b == 0:
+                denominators.append((m1 * y1) // m)
+                break
+            y = m
+            m = b
+            i = i + 1
+            
+    return denominators[0]
+        
+def convertFracts(lst):
+    
+    #Edge Case
+    if lst == []:
+        return []
+    
+    lcd = find_LCD(lst)
+    
+    fractions = []
+    
+    for entry in lst:
+        multiplier = lcd // entry[1]
+        fractions.append([entry[0] * multiplier, entry[1] * multiplier])
+    
+    return fractions
