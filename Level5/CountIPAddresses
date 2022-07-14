@@ -1,0 +1,14 @@
+def num(number):
+    numbers = number.split('.')
+    numbers.reverse()
+    i = 0
+    total = 0
+    while i < 4:
+        total = total + int(numbers[i]) * (256 ** i)
+        i = i + 1
+    return total
+
+def ips_between(start, end):
+    number1 = num(start)
+    number2 = num(end)
+    return abs(number1 - number2)
