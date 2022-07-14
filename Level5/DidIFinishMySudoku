@@ -1,0 +1,51 @@
+def done_or_not(board):
+    
+    numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    
+    #Check that all rows are valid
+    
+    for row in board:
+        for number in numbers:
+            if number in row:
+                pass
+            else:
+                return 'Try again!'
+    
+    #Check that all columns are valid
+    
+    i = 0
+    while i < 9:
+        j = 0
+        column = list()
+        while j < 9:
+            column.append(board[j][i])
+            j = j + 1
+        for number in numbers:
+            if number in column:
+                pass
+            else:
+                return 'Try again!'
+        i = i + 1
+        
+    #Check that all 3x3 squares are valid.
+    
+    seed_squares = [(0,0),(0,3),(0,6),(3,0),(3,3),(3,6),(6,0),(6,3),(6,6)]
+    movement = [(0,0),(1,0),(2,0),(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)]
+    
+    for square in seed_squares:
+        square_contents = list()
+        x = square[0]
+        y = square[1]
+        for move in movement:
+            new_x = x + move[0]
+            new_y = y + move[1]
+            square_contents.append(board[new_x][new_y])
+        for number in numbers:
+            if number in square_contents:
+                pass
+            else:
+                return 'Try again!'
+    
+    #If we passed all of the previous tests then it must be a valid solution.
+    
+    return "Finished!"
