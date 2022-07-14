@@ -1,0 +1,16 @@
+def loop_size(node):
+    car1 = node.next
+    car2 = node
+    
+    while car1 != car2:
+        car2 = car2.next
+        car1 = car1.next
+        car1 = car1.next
+        
+    count = 1
+    car1 = car1.next
+    while car1 != car2:
+        count = count + 1
+        car1 = car1.next
+    
+    return count
