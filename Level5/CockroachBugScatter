@@ -1,0 +1,71 @@
+def find_roaches(room):
+    roach_locations = list()
+    roaches = 'UDLR'
+    row = 0
+    while row < len(room):
+        column = 0
+        while column < len(room[0]):
+            if room[row][column] in roaches:
+                roach_locations.append((row, column))
+            column += 1
+        row += 1
+    return roach_locations
+
+
+def cockroaches(room):
+    # Set up counter and a list of roach locations.
+    holes_used = [0 for x in range(0, 10)]
+    roach_locations = find_roaches(room)
+    
+    # Move each roach to the edge of the room
+    directions = ['U','L','D','R']
+    
+    for location in roach_locations:
+        row = location[0]
+        column = location[1]
+        orientation = room[row][column]
+
+        # Move bug based on orientation, and reorient the bug.
+        if orientation == 'U':
+            row = 0
+            orientation = 'L'
+        elif orientation == 'L':
+            column = 0
+            orientation = 'D'
+        elif orientation == 'D':
+            row = len(room) - 1
+            orientation = 'R'
+        else:
+            column = len(room[0]) - 1
+            orientation = 'U'
+        
+        # Now the bug has been moved to the wall it needs to circle the room counter-clockwise
+        # until it finds a whole.
+        
+        moves = {'U':(-1,0), 'L':(0,-1), 'D':(1,0), 'R':(0,1)}
+        
+        while True:
+            # If the roach is at hole.  It enters the hole, and we update holes_used.
+            if room[row][column].isnumeric():
+                hole_number = int(room[row][column])
+                holes_used[hole_number] = holes_used[hole_number] + 1
+                break
+            
+            # If the roach is not at a hole it needs to move.
+            movement = moves[orientation]
+            new_row = row + movement[0]
+            new_column = column + movement[1]
+            
+            # If the new placement is outside the room.  We need to change our orientation.
+            if new_row < 0 or new_row >= len(room) or new_column < 0 or new_column >= len(room[0]):
+                index = directions.index(orientation)
+                index = (index + 1) % 4
+                orientation = directions[index]
+                continue
+            
+            # If the new placement is valid update our row and column
+            row = new_row
+            column = new_column
+    
+    # Once all of the roaches have moved to a hole return holes_used
+    return holes_used
