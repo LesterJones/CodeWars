@@ -1,0 +1,54 @@
+import copy
+
+# Helper function to print the game board.
+def print_board(board):
+    for row in board:
+        print(row)
+    print('---------------------')
+
+
+def count_living_neighbors(row, column, cells):
+    neighbors = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
+    how_many_rows = len(cells)
+    how_many_columns = len(cells[0])
+    
+    count = 0
+    for neighbor in neighbors:
+        new_row = (row + neighbor[0]) % how_many_rows
+        new_column = (column + neighbor[1]) % how_many_columns
+        if cells[new_row][new_column] == 1:
+            count += 1
+    return count
+
+
+def get_generation(cells, generation):
+    current_generation = copy.deepcopy(cells)
+    
+    # Cycle through the rows and columns of the current generation & Update the next_generation
+    # using the rules to the game of life.
+    i = 1
+    while i <= generation:
+        next_generation = copy.deepcopy(cells)
+        row = 0
+        while row < len(cells):
+            column = 0
+            while column < len(cells[0]):
+                is_alive = current_generation[row][column]
+                living_neighbors = count_living_neighbors(row, column, current_generation)
+                # This is the core logic behind conways game of life.
+                if is_alive:
+                    if 2 <= living_neighbors <= 3:
+                        next_generation[row][column] = 1
+                    else:
+                        next_generation[row][column] = 0
+                else:
+                    if living_neighbors == 3:
+                        next_generation[row][column] = 1
+                    else:
+                        next_generation[row][column] = 0
+                column += 1
+            row += 1
+        current_generation = next_generation
+        i += 1
+        
+    return current_generation
