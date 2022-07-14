@@ -1,0 +1,119 @@
+def word_score(word1, word2, values):
+    total = 0
+    total = total + values[word1[0]]
+    total = total + values[word1[1]]
+    total = total + values[word2[0]]
+    total = total + values[word2[1]]
+    return total
+    
+    
+
+def commonality(word1, word2):
+    if word1[0] == word2[0] or word1[1] == word2[1]:
+        return 1
+    else:
+        return 0
+
+def find_hashtag(puzzle):
+    
+    i = 0
+    while i <= 1:
+        j = 0
+        while j <= 1:
+            if puzzle[i][j] == '#':
+                marker = [i,j]
+            j = j + 1
+        i = i + 1
+    return marker
+
+def crossword_2x2(puzzle):
+    
+    crossword = puzzle
+    
+    #print(words[0], values['A'])
+    
+    hashtag = find_hashtag(puzzle)
+
+    if hashtag == [0,0]:
+        horizontal_word = puzzle[1][0] + puzzle[1][1]
+        vertical_word = puzzle[0][1] + puzzle[1][1]
+    elif hashtag == [0,1]:
+        horizontal_word = puzzle[1][0] + puzzle[1][1]
+        vertical_word = puzzle[0][0] + puzzle[1][0]
+    elif hashtag == [1,0]:
+        horizontal_word = puzzle[0][0] + puzzle[0][1]
+        vertical_word = puzzle[0][1] + puzzle[1][1]    
+    elif hashtag == [1,1]:
+        horizontal_word = puzzle[0][0] + puzzle[0][1]
+        vertical_word = puzzle[0][0] + puzzle[1][0]
+    else:
+        return 'error1'
+    
+    possible_horizontals = []
+    possible_verticles = []
+    
+    if horizontal_word == "__":
+        possible_horizontals = list(words)
+    else:
+        for word in words:
+            if commonality(word, horizontal_word):
+                possible_horizontals.append(word)
+
+    if vertical_word == "__":
+        possible_verticles = list(words)
+    else:
+        for word in words:
+            if commonality(word, vertical_word):
+                possible_verticles.append(word)     
+    
+    
+    solutions = []
+    score_set = set()
+    
+    if hashtag == [0,0]:
+        for word1 in possible_horizontals:
+            for word2 in possible_verticles:
+                if word1 == word2:
+                    continue
+                if word1[1] == word2[1]:
+                    solutions.append([word1,word2,word_score(word1,word2,values)])
+                    score_set.add(word_score(word1,word2,values))
+    if hashtag == [0,1]:
+        for word1 in possible_horizontals:
+            for word2 in possible_verticles:
+                if word1 == word2:
+                    continue
+                if word1[0] == word2[1]:
+                    solutions.append([word1,word2,word_score(word1,word2,values)])
+                    score_set.add(word_score(word1,word2,values))
+    if hashtag == [1,0]:
+        for word1 in possible_horizontals:
+            for word2 in possible_verticles:
+                if word1 == word2:
+                    continue
+                if word1[1] == word2[0]:
+                    solutions.append([word1,word2,word_score(word1,word2,values)])
+                    score_set.add(word_score(word1,word2,values))
+    if hashtag == [1,1]:
+        for word1 in possible_horizontals:
+            for word2 in possible_verticles:
+                if word1 == word2:
+                    continue
+                if word1[0] == word2[0]:
+                    solutions.append([word1,word2,word_score(word1,word2,values)])
+                    score_set.add(word_score(word1,word2,values))
+
+    score_set = list(score_set)
+    score_set.sort(reverse=True)
+    final_solution = []
+    
+    for score in score_set:
+        phrases = []
+        for word in solutions:
+            if word[2] == score:
+                phrases.append(word[0] + word[1] + str(word[2]))
+        phrases.sort()
+        for phrase in phrases:
+            final_solution.append((phrase[0:2],phrase[2:4],int(phrase[4:])))
+    
+    return final_solution
