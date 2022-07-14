@@ -1,0 +1,57 @@
+# Helper function to print game.
+def print_cells(cells):
+    for entry in cells:
+        print(entry)
+        
+
+def count_living_neighbors(row, column, cells):
+    
+    neighbors = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
+    count = 0
+    for neighbor in neighbors:
+        new_row = row + neighbor[0]
+        new_column = column + neighbor[1]
+        if 0 <= new_row < len(cells) and 0 <= new_column < len(cells[0]):
+            if cells[new_row][new_column] == 1:
+                count += 1
+    return count
+
+
+# Function to create the next generation of Conways Game of Life.
+# Input is a grid of living and dead cells, denoted 0 & 1.
+def next_gen(cells):
+    row = 0
+    # Create a copy of cells.  I was having a problem using cells.copy().  Not sure why.
+    world = list()
+    while row < len(cells):
+        column = 0
+        new_row = list()
+        while column < len(cells[0]):
+            new_row.append(cells[row][column])
+            column += 1
+        world.append(new_row)
+        row += 1
+
+    # Cycle through the rows and columns.  Update grid as we go.
+    # world variable will hold the new generation.
+    row = 0
+    while row < len(cells):
+        column = 0
+        while column < len(cells[0]):
+            cell_is_alive = cells[row][column]
+            living_neighbors = count_living_neighbors(row, column, cells)
+
+            # Apply the rules of the game of life.  Store the results in world variable.
+            if cell_is_alive:
+                if 2 <= living_neighbors <= 3:
+                    world[row][column] = 1
+                else:
+                    world[row][column] = 0
+            else:
+                if living_neighbors == 3:
+                    world[row][column] = 1
+                else:
+                    world[row][column] = 0
+            column += 1
+        row += 1
+    return world
