@@ -1,0 +1,144 @@
+import heapq
+from numpy import Inf
+
+
+# We will use the toll_map to create a graph.
+# Also, build a couple useful dictionaries.
+
+def build_a_graph(t):
+    graph = dict()
+    neighbors = [(0,1),(-1,0),(1,0),(0,-1)]
+    node_to_coordinate = dict()
+    coordinate_to_node = dict()
+    node_to_weight = dict()
+    node = 0
+    row = 0
+    while row < len(t):
+        column = 0
+        while column < len(t[0]):
+            node_to_coordinate[node] = (row, column)
+            coordinate_to_node[(row, column)] = node
+            node_to_weight[node] = t[row][column]
+            node += 1
+            adjacent_nodes = list()
+            for entry in neighbors:
+                new_row = row + entry[0]
+                new_column = column + entry[1]
+                if 0 <= new_row < len(t) and 0 <= new_column < len(t[0]):
+                    adjacent_nodes.append((new_row, new_column))
+            graph[(row, column)] = adjacent_nodes
+            column += 1
+        row += 1
+        
+    # Rewrite graph.  Replacing coordinates with representative numbers.
+    new_graph = dict()
+    keys = graph.keys()
+    for key in keys:
+        new_key = coordinate_to_node[key]
+        new_values = list()
+        values = graph[key]
+        for value in values:
+            new_values.append(coordinate_to_node[value])
+        new_graph[new_key] = new_values
+
+    return new_graph, node_to_coordinate, coordinate_to_node, node_to_weight
+    
+
+# Use Djikstra to find the cheapest path through a weighted graph.
+
+def cheapest_path(t, start, finish):
+    
+    # Create a graph, and a couple of reference dictionaries.
+    graph, node_to_coordinate, coordinate_to_node, node_to_weight = build_a_graph(t)
+    
+    # Set up a distance list, and initialize the start node to 0.
+    distances = [Inf for x in range(0, len(graph))]
+    start_node = coordinate_to_node[start]
+    distances[start_node] = 0
+    
+    # Set up a list indicating which nodes have been visited
+    visited_nodes = [False for x in range(0, len(graph))]
+    
+    # Set up a list indicating the node that was visited prior to that node.
+    # This will be used to construct the shortest path later.
+    last_visited = ['' for x in range(0, len(graph))]
+    
+    # Start a priority queue.  We will visit the node with the smallest value first.
+    # heapq will be used to create a min heap for this purpose.
+    queue = [(0, start_node)]
+    heapq.heapify(queue)
+
+    # Cycle through the min-heap queue until it is empty.
+    while len(queue) > 0:
+        # Pop the smallest distance from our min_heap
+        current_node = heapq.heappop(queue)
+        current_distance = current_node[0]
+        current_node = current_node[1]
+        
+        # If it is a node we have visited we can continue without processing.
+        # Else, mark it as visited & continue processing.
+        if visited_nodes[current_node] == True:
+            continue
+        else:
+            visited_nodes[current_node] = True
+            
+        # Get the nodes that are connected to our current node.
+        connected_nodes = graph[current_node]
+        
+        # Process each node in connected_nodes.
+        for entry in connected_nodes:
+            # If entry has been visited continue without processing
+            if visited_nodes[entry] == True:
+                continue
+                
+            node_distance = node_to_weight[entry] + current_distance
+            if node_distance < distances[entry]:
+                distances[entry] = node_distance
+                last_visited[entry] = current_node
+                heapq.heappush(queue, (node_distance, entry))
+
+    # Once all of the nodes have been processed our last_visited list should
+    # trace the nodes from the end back to the beginning.
+    # We will convert the list back into coordinates
+    start_node = coordinate_to_node[start]
+    replace_index = last_visited.index('')
+    last_visited[replace_index] = 0
+    
+    node_index = coordinate_to_node[finish]
+    node_list = list()
+    
+    while True:
+        if node_index == start_node:
+            node_list.append(node_index)
+            break
+        node_list.append(node_index)
+        node_index = last_visited[node_index]
+    
+    node_list.reverse()
+    
+    # Now we have constructed a node path that represents the cheapest path.
+    # We just need to convert that into a series of moves given by
+    # 'up', 'down', 'left', and 'right'
+    
+    move_list = list()
+    
+    # Edge Case
+    if node_list == [] or len(node_list) < 2:
+        return []
+    
+    i = 0
+    while i < len(node_list) - 1:
+        node1 = node_to_coordinate[node_list[i]]
+        node2 = node_to_coordinate[node_list[i+1]]
+        print(node1, node2)
+        if node1[0] > node2[0]:
+            move_list.append('up')
+        elif node2[0] > node1[0]:
+            move_list.append('down')
+        elif node1[1] > node2[1]:
+            move_list.append('left')
+        elif node2[1] > node1[1]:
+            move_list.append('right')
+        i = i + 1
+    
+    return move_list
