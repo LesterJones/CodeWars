@@ -1,0 +1,27 @@
+import re
+
+def dirReduc(arr):
+    directions = " ".join(arr)
+
+    length = len(directions)
+    new_length = length - 1
+    
+    while length > new_length:
+        length = new_length
+        directions = re.sub("WEST EAST", "",directions)
+        directions = re.sub("  ", " ", directions)
+        directions = re.sub("EAST WEST", "",directions)
+        directions = re.sub("  ", " ", directions)
+        directions = re.sub("NORTH SOUTH", "",directions)
+        directions = re.sub("  ", " ", directions)
+        directions = re.sub("SOUTH NORTH", "",directions)
+        directions = re.sub("  ", " ", directions)
+        directions = directions.strip()
+        new_length = len(directions)
+
+    directions = directions.split()
+    return directions
+    
+    
+    
+    re.sub(pat,replace,string)
