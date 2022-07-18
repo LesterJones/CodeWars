@@ -1,0 +1,9 @@
+def domain_name(url):
+    copy = url
+    
+    copy = copy.split("//",1)
+    copy = copy[-1]
+    copy = copy.strip("www.")
+    copy = copy.split(".")
+    copy = copy[0]
+    return copy
