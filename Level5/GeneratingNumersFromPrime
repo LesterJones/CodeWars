@@ -1,0 +1,37 @@
+def has_all_factors(factors, primesL):
+    factors_set = set(factors)
+    primes_set = set(primesL)
+    return primes_set.issubset(factors_set)
+
+
+def count_find_num(primesL, limit):
+    print(primesL)
+    print(limit)
+    all_numbers = list()
+    numbers = [(1, [])]
+    
+    flag = True
+    while flag:
+        flag = False
+        new_numbers = list()
+        for entry in numbers:
+            number = entry[0]
+            factors = entry[1]
+            for prime in primesL:
+                new_number = number * prime
+                new_factors = factors.copy()
+                new_factors.append(prime)
+                if new_number <= limit:
+                    new_numbers.append((new_number, new_factors))
+                    flag = True
+        all_numbers.extend(numbers)
+        numbers = new_numbers
+    answer = []
+    for entry in all_numbers:
+        if has_all_factors(entry[1], primesL):
+            answer.append(entry[0])
+    answer = list(set(answer))
+    answer.sort()
+    if answer == []:
+        return answer
+    return [len(answer), answer[-1]]
