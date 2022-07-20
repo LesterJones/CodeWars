@@ -1,0 +1,21 @@
+def first_non_repeating_letter(string):
+    
+    word = list(string + " ")
+    i = 0
+    while i < len(string):
+        j = 0
+        test_letter = word[i].lower()
+        repeated = False
+        while j <= len(string):
+            if j == i:
+                j = j + 1    
+            if word[j].lower() == test_letter:
+                repeated = True
+                break
+            else: 
+                j = j + 1
+        if repeated == False:
+            return word[i]
+        else:
+            i = i + 1
+    return ""
