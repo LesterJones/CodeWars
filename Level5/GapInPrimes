@@ -1,0 +1,39 @@
+import math
+
+# This is a primitive test for primality.
+
+def is_prime(number):
+    if number % 2 == 0:
+        return False
+    i = 3
+    while i <= math.sqrt(number):
+        if number % i == 0:
+            return False
+        i = i + 2
+    return True
+
+
+def gap(g, m, n):
+    last_prime = 2
+    number = m
+    
+    # If the start_number is even, add one to make it odd.
+    if number % 2 == 0:
+        number += 1
+    
+    # Cycle the the number in the range checking for primality.
+    # If the gap between two primes is right, Then return them
+    while number <= n:
+        if is_prime(number):
+            pass
+        else:
+            number += 2
+            continue
+            
+        if number - last_prime == g:
+            return [number-g, number]
+        last_prime = number
+        number += 2
+    
+    # If no prime pairs are found return None
+    return None
