@@ -1,0 +1,17 @@
+def score(dice):
+
+    total = 0
+    scoring = {1:1000, 2:200, 3:300, 4:400, 5:500, 6:600}
+    i = 1
+    while i < 7:
+        if dice.count(i) > 2:
+            total = total + scoring[i]
+            dice.remove(i)
+            dice.remove(i)
+            dice.remove(i)
+        i = i + 1
+    
+    total = total + (dice.count(1)) * 100
+    total = total + (dice.count(5)) * 50
+    
+    return total
