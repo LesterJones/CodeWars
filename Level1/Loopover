@@ -1,0 +1,287 @@
+from typing import List, Optional
+import copy
+import random
+
+
+# Program to solve a Loopover Game
+
+# Helper function for troubleshooting
+def print_board(board):
+    for row in board:
+        print(row)
+        
+        
+# Create a reference dictionary that will contain the correct end-location for each symbol.
+def find_final_positions(mixed_up_board):
+    
+    # Create an alphabet with all known symbols in appropriate order.
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789αβγδεζηθλμνξπρσφχψω"
+    
+    # Add each element of the board to a set called letters_in_board
+    letters_in_board = set()
+    row = 0
+    while row < len(mixed_up_board):
+        column = 0
+        while column < len(mixed_up_board[0]):
+            letters_in_board.add(mixed_up_board[row][column])
+            column += 1
+        row += 1
+    
+    # Now utilize the letters_in_board set and the alphabet to create what the solution
+    # should look like.  We will save the proper coordinates to a dictionary.
+    letters_used = list()
+    i = 0
+    while i < len(alphabet):
+        letter = alphabet[i]
+        if letter in letters_in_board:
+            letters_used.append(letter)
+        i = i + 1
+    
+    final_positions = dict()
+    i = 0
+    total_rows = len(mixed_up_board)
+    total_columns = len(mixed_up_board[0])
+    while i < len(letters_used):
+        row = i // total_columns
+        column = i % total_columns
+        final_positions[letters_used[i]] = (row, column)
+        i = i + 1
+    
+    return letters_used, final_positions
+        
+
+def find_current_location(board, letter):
+    row = len(board) - 1
+    while row >= 0:
+        column = len(board[0]) - 1
+        while column >= 0:
+            if board[row][column] == letter:
+                return row, column
+            column = column - 1
+        row = row - 1
+    return 'Error find_current_location'
+
+
+def adjust_board_row(board, row, direction):
+    new_board = board.copy()
+    new_row = board[row]
+    if direction == 'left':
+        letter = new_row.pop(0)
+        new_row.append(letter)
+    if direction == 'right':
+        letter = new_row.pop()
+        new_row.insert(0, letter)
+    new_board[row] = new_row
+    return new_board
+
+
+def adjust_board_column(board, column, direction):
+
+    new_board = copy.deepcopy(board)
+    if direction == 'up':
+        holder = new_board[0][column]
+        row = 1
+        while row < len(board):
+            new_board[row - 1][column] = new_board[row][column]
+            row = row + 1
+        new_board[len(board)-1][column] = holder
+        return new_board
+    if direction == 'down':
+        holder = new_board[-1][column]
+        row = len(board)-1
+        while row >= 0:
+            new_board[row][column] = new_board[row-1][column]
+            row = row - 1
+        new_board[0][column] = holder
+        return new_board
+    
+    return 'Error adjust_column'
+
+
+def randomize_board(board):
+    new_board = copy.deepcopy(board)
+    number_of_random_moves = 20
+    move_list = list()
+    i = 0
+    while i < number_of_random_moves:
+        row = random.randint(0, len(board)-1)
+        column = random.randint(0, len(board[0])-1)
+        x = random.randint(0,1) # 0=row, 1=column
+        if x == 0:
+            new_board = adjust_board_row(new_board, row, 'right')
+            move_list.append('R' + str(row))
+        if x == 1:
+            new_board = adjust_board_column(new_board, column, 'down')
+            move_list.append('D' + str(column))
+        i = i + 1
+    return new_board, move_list
+
+    
+def loopover(mixed_up_board: List[List[str]], solved_board: List[List[str]]) -> Optional[List[str]]:
+    # Create a copy of mixed_up_board.
+    # This will be changed as we go, and will keep track of where each letter is.
+    board = copy.deepcopy(mixed_up_board)
+    
+    # Randomize the starting board.  This should allow me to recursively reach a solution,
+    # because some starting positions will not finish, and others will.
+    # We will also record the moves required to get to the randomized_position.
+    board, move_list = randomize_board(board)
+    
+    # Create a set of letters_used in the proper order.
+    # Create a dictionary of final positions for each letter in letters_used.
+    letters_used, final_positions = find_final_positions(mixed_up_board)
+    final_letter = letters_used.pop()
+    
+    # We can use one algorithm to align all of the rows except the last row.
+    for letter in letters_used:
+        
+        # Find the destinaion of our current letter.
+        destination = final_positions[letter]
+        final_row = destination[0]
+        final_column = destination[1]
+        
+        # If the destination is in the final row we can break out of this loop.
+        if final_row == len(board) - 1:
+            break
+        
+        # Find the current location of the  current letter in our board.
+        current_row, current_column = find_current_location(board, letter)
+        
+        # Check if the letter is already in the correct location.
+        if current_row == final_row and current_column == final_column:
+            continue
+            
+        # Check if the letter is already in the correct row, and make adjustments if needed.
+        if current_row == final_row:
+            # Move current column down 1.
+            board = adjust_board_column(board, current_column, 'down')
+            move_list.append('D' + str(current_column))
+            current_row = current_row + 1
+            # Move current row right 1.
+            board = adjust_board_row(board, current_row, 'right')
+            move_list.append('R' + str(current_row))
+            # Move column back up, and adjust current column.
+            board = adjust_board_column(board, current_column, 'up')
+            move_list.append('U' + str(current_column))
+            current_column = (current_column + 1) % len(board[0])
+        
+        # Check if current_column is correct, and make adjustments if needed.
+        if current_column == final_column:
+            # Move current_row right one.
+            board = adjust_board_row(board, current_row, 'right')
+            move_list.append('R' + str(current_row))
+            current_column = (current_column + 1) % len(board[0])
+            
+        # Move the destination column down an appropriate number of times.
+        number_of_moves = current_row - final_row
+        i = 0
+        while i < number_of_moves:
+            board = adjust_board_column(board, final_column, 'down')
+            move_list.append('D' + str(final_column))
+            i = i + 1
+        # Move the current_row until the columns line up
+        while current_column != final_column:
+            board = adjust_board_row(board, current_row, 'right')
+            move_list.append('R' + str(current_row))
+            current_column = (current_column + 1) % len(board[0])
+        # Once the columns are lined up move the column back up.
+        i = 0
+        while i < number_of_moves:
+            board = adjust_board_column(board, final_column, 'up')
+            move_list.append('U' + str(final_column))
+            i = i + 1      
+            
+    # Ok, all of the rows except the final row are now in place.
+    # We will need a different algorithm to finish the final row.
+    row_length = len(board[0])
+    total_letters = len(letters_used)
+    letters_remaining = letters_used[total_letters-row_length+1::]
+    final_letter = final_letter
+    letters_remaining.append(final_letter)
+    
+    # Loop through the remaining letters, placing them one at a time.
+    end_column = len(board[0]) - 1
+    end_row = len(board) - 1
+    letter_1 = letters_remaining.pop(0)
+    first_letter = letter_1 # Save for later
+    while len(letters_remaining) > 1:
+        letter_2 = letters_remaining.pop(0)
+        row_1, column_1 = find_current_location(board, letter_1)
+        row_2, column_2 = find_current_location(board, letter_2)
+        
+        # Check if they are in the correct order
+        if (column_1 + 1) % len(board[0]) == column_2 and row_1 == row_2:
+            letter_1 = letter_2
+            continue
+        
+        # Special case: If the letter_2 is in the second to last row, last_column.
+        if row_2 == end_row - 1:
+            # Move the first letter to the 2nd to last row.
+            while column_1 != end_column - 1:
+                board = adjust_board_row(board, end_row, 'right')
+                column_1 = (column_1 + 1) % len(board[0])
+                move_list.append('R' + str(end_row))
+            # Move the last column down 1.
+            board = adjust_board_column(board, end_column, 'down')
+            move_list.append('D' + str(end_column))
+            # Move the last row left 1.
+            board = adjust_board_row(board, end_row, 'left')
+            move_list.append('L' + str(end_row))
+            # Move the last column up 1.
+            board = adjust_board_column(board, end_column, 'up')
+            move_list.append('U' + str(end_column))
+            
+            letter_1 = letter_2
+            continue
+        
+        # Shift bottom row until letter2 is in the final column
+        while column_2 != end_column:
+            board = adjust_board_row(board, end_row, 'right')
+            column_1 = (column_1 + 1) % len(board[0])
+            column_2 = (column_2 + 1) % len(board[0])
+            move_list.append('R' + str(end_row))
+        
+        # Shift last_column down 1
+        board = adjust_board_column(board, end_column, 'down')
+        move_list.append('D' + str(end_column))
+        
+        # As a precaution reset row_1 * column_1
+        row_1, column_1 = find_current_location(board, letter_1)
+        
+        # Shift bottom row until letter 1 is in the second to last column.
+        while column_1 != end_column - 1:
+            board = adjust_board_row(board, end_row, 'right')
+            column_1 = (column_1 + 1) % len(board[0])
+            move_list.append('R' + str(end_row))
+        
+        # Shift last_column up 1
+        board = adjust_board_column(board, end_column, 'up')
+        move_list.append('U' + str(end_column))
+        
+        # Reassign letter1.
+        letter_1 = letter_2
+        
+    # Now the last row should be in the correct order.  We just need to rotate the last
+    # row until it is correct.
+    first_letter = first_letter
+    final_letter = final_letter
+    row1, column1 = find_current_location(board, first_letter)
+    while column1 != 0:
+        board = adjust_board_row(board, end_row, 'right')
+        column1 = (column1 + 1) % len(board[0])
+        move_list.append('R' + str(end_row))
+
+    # Check if unsolvable.  i.e. the board isn't solved yet and the parity is odd
+    if board[-1][-1] != final_letter:
+        if (len(board) * len(board[0])) % 2 == 1:
+            return None
+    else:
+        return move_list
+    
+    # We still have special cases where the last two numbers are swapped.
+    # I could try to figure them out, or I could randomize the input and
+    # recursively recall the function.
+    print("Is this working?")
+    new_move_list = loopover(mixed_up_board, solved_board)
+    
+    return new_move_list
