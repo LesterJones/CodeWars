@@ -1,0 +1,73 @@
+import numpy as np
+
+def build_matrices(x, y):
+    # Dynamic Programming: We will use a matrix to store our results.
+    # x will be used for rows, y will be used for columns
+    rows = len(x) + 1
+    columns = len(y) + 1
+    values = []
+    pointers = []
+    row = 0
+    while row < rows:
+        new_values = []
+        new_pointers = []
+        column = 0
+        while column < columns:
+            new_values.append(0)
+            new_pointers.append((0,0))
+            column += 1
+        values.append(new_values)
+        pointers.append(new_pointers)
+        row += 1
+    return values, pointers
+
+
+def construct_subsequence(x,y,pointers):
+    row = len(pointers) - 1
+    column = len(pointers[0]) - 1
+    answer = ''
+    while True:
+        if row < 1 or column < 1:
+            break
+        pointer = pointers[row][column]
+        if pointer[0] == row - 1 and pointer[1] == column - 1:
+            answer = answer + x[row-1]
+        row = pointer[0]
+        column = pointer[1]
+    answer = answer[::-1]
+    return answer
+        
+    
+def lcs(x, y):
+    # Edge Case
+    if x == '' or y == '' or x is None or y is None:
+        return ''
+
+    # Create 2 matrices.  One will hold values, and one will hold pointers.
+    values, pointers = build_matrices(x,y)
+    
+    # Loop through the matrices, and start changing values, and pointers.
+    row = 1
+    while row < len(values):
+        column = 1
+        while column < len(values[0]):
+            letter_1 = x[row-1]
+            letter_2 = y[column-1]
+            if letter_1 == letter_2:
+                current_value = values[row-1][column-1] + 1
+                pointer = (row-1, column-1)
+            else:
+                if values[row-1][column] > values[row][column-1]:
+                    current_value = values[row-1][column]
+                    pointer = (row-1,column)
+                else:
+                    current_value = values[row][column-1]
+                    pointer = (row,column-1)
+            values[row][column] = current_value
+            pointers[row][column] = pointer
+            column += 1
+        row += 1
+    # Take our list of pointers, and reconstruct the letters of the sequence.
+    answer = construct_subsequence(x,y,pointers)
+    
+    return answer
