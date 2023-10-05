@@ -1,0 +1,144 @@
+from preloaded import WORDS
+
+# Create a trie data structure.  All WORDS will be inserted into the trie.
+class Node():
+    def __init__(self):
+        self.leaves = [0 for x in range(26)] # Representing the letters a-z.
+        self.terminal = False
+        self.is_root = False
+        self.is_there_more = False
+    
+    # Add new words to the trie.
+    def add_word(self, word):
+        if word == '':
+            self.terminal = True
+        else:
+            self.is_there_more = True
+            index = ord(word[0]) - 97
+            if self.leaves[index] == 0:
+                new_node = Node()
+                new_node.add_word(word[1::])
+                self.leaves[index] = new_node
+            else:
+                working_node = self.leaves[index]
+                working_node.add_word(word[1::])
+                self.leaves[index] = working_node
+        
+    
+    # Check if a given word is in the trie.
+    def check_word(self, word):
+        if word == '':
+            return self.terminal, self.is_there_more
+        
+        index = ord(word[0]) - 97
+        if self.leaves[index] == 0:
+            return False, False
+        else:
+            working_node = self.leaves[index]
+            return working_node.check_word(word[1::])
+            
+
+# Because I do not want to recalculate a new trie for every test I am going to build it
+# as a global to avoid timing out.
+root = Node()
+root.is_root = True
+for word in WORDS:
+    root.add_word(word)
+
+
+# Transform string into a matrix representation.
+def build_board(puzzle):
+    rows = puzzle.split('-')
+    board = list()
+    for row in rows:
+        new_row = list(row)
+        board.append(new_row)
+    return board
+
+
+# Print board for troubleshooting.
+def print_board(board):
+    for row in board:
+        print(row)
+
+
+# Find the board coordinates that contain letters.
+def find_coordinates(board):
+    coordinates = list()
+    i = 0
+    while i < len(board):
+        j = 0
+        while j < len(board[0]):
+            if board[i][j] != ' ':
+                coordinates.append((i, j))
+            j = j + 1
+        i = i + 1
+    return coordinates
+
+
+# Use the board and start point to build a list of possible words.
+def find_words(board, start):
+    x = start[0]
+    y = start[1]
+    
+    word_set = set()
+    
+    moves = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+    visited = []
+    word = ''
+        
+    queue = [(x, y, visited, word)]
+    while len(queue) > 0:
+        # De-queue a point
+        point = queue.pop()
+        x = point[0]
+        y = point[1]
+        visited = point[2]
+        new_visited = visited.copy()
+        word = point[3]
+
+        new_word = word + board[x][y]
+        new_visited.append((x, y))
+        
+        # Check if new word is in the trie.
+        in_trie, is_there_more = root.check_word(new_word)
+
+        if in_trie:
+            word_set.add(new_word)
+        if is_there_more == False:
+            continue
+            
+        # Add new points to the queue.
+        for move in moves:
+            new_x = x + move[0]
+            new_y = y + move[1]
+            if (new_x, new_y) in new_visited:
+                continue
+                
+            if 0 <= new_x < len(board) and 0 <= new_y < len(board[0]):
+                if board[new_x][new_y] != ' ':
+                    queue.append((new_x, new_y, new_visited, new_word))
+                    
+    return word_set
+        
+
+def squaredle(puzzle):
+    # Rewrite the puzzle as a matrix.
+    board = build_board(puzzle)
+    
+    # Find the coordinates that contain letters.
+    start_points = find_coordinates(board)
+    
+    # Use a separate function to find all possible words in the puzzle.
+    word_set = set()
+    
+    for point in start_points:
+        words = find_words(board, point)
+        word_set = word_set.union(words)
+    
+    # Sort the word list by length, and then alphabeticaly.
+    word_list = list(word_set)
+    word_list.sort()
+    word_list = sorted(word_list, key=len)
+
+    return word_list
